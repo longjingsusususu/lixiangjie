@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>报销制度问答 · 阶段1演示版</title>
+<style>
+  :root { --ink:#1f2d3d; --sub:#5b6b7b; --line:#dde4ea; --brand:#1F3A5F; --accent:#B23A2E; --bg:#f5f7f9; }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; padding: 40px 16px; }
+  .wrap { max-width: 780px; margin: 0 auto; }
+  header h1 { font-size: 26px; color: var(--brand); letter-spacing: 1px; }
+  header .tag { display:inline-block; font-size:12px; color:#fff; background:var(--brand); border-radius:3px; padding:2px 10px; margin-bottom:10px; letter-spacing:2px; }
+  header p { color: var(--sub); font-size: 13.5px; margin-top: 8px; line-height: 1.7; }
+  .search { display:flex; gap:10px; margin: 26px 0 8px; }
+  .search input { flex:1; font-size:16px; padding:13px 16px; border:1.5px solid var(--line); border-radius:8px; outline:none; background:#fff; }
+  .search input:focus { border-color: var(--brand); }
+  .search button { font-size:15px; padding:0 26px; border:none; border-radius:8px; background:var(--brand); color:#fff; cursor:pointer; }
+  .search button:hover { background:#2a4d7a; }
+  .tips { font-size:12.5px; color:var(--sub); margin-bottom:22px; }
+  .tips span { cursor:pointer; color:var(--brand); border-bottom:1px dashed var(--brand); margin-right:10px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:18px 20px; margin-bottom:14px; box-shadow:0 1px 3px rgba(31,58,95,.06); }
+  .card .head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+  .card .head b { font-size:15px; color:var(--brand); }
+  .card .head small { color:#9aa7b3; font-size:11.5px; }
+  .card .sents { font-size:14px; line-height:1.9; }
+  .card .sents p { padding:6px 10px; border-left:3px solid #e3c6c3; background:#fbf6f5; border-radius:0 6px 6px 0; margin:6px 0; }
+  mark { background:#ffe9a8; padding:0 2px; border-radius:2px; }
+  details { margin-top:8px; font-size:13px; color:var(--sub); }
+  details summary { cursor:pointer; outline:none; }
+  details .full { margin-top:6px; color:var(--ink); line-height:1.8; border-top:1px dashed var(--line); padding-top:8px; }
+  .empty { text-align:center; color:var(--sub); padding:40px 0; font-size:14px; }
+  .none { background:#fff; border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:18px 20px; color:#7a2c24; font-size:14px; }
+  footer { margin-top:30px; font-size:12px; color:#9aa7b3; text-align:center; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="tag">阶段 1 · 演示版</span>
+    <h1>报销制度问答</h1>
+    <p>输入问题，系统对制度文档做<b>混合检索</b>（字符二元组近似 BM25 + 语义匹配，与 Python 版同思路），直接摘录制度原句作答——<b>不经大模型，零幻觉，附条款出处</b>。当前内置 1 份样例制度、5 个章节片段。</p>
+  </header>
+
+  <div class="search">
+    <input id="q" placeholder="例如：住一晚最多能报多少钱？" autofocus>
+    <button onclick="ask()">提问</button>
+  </div>
+  <div class="tips">试试：
+    <span onclick="fill('住一晚最多能报多少钱')">住一晚最多能报多少钱</span>
+    <span onclick="fill('超过一万谁审批')">超过一万谁审批</span>
+    <span onclick="fill('发票抬头开错了能报吗')">发票抬头开错了能报吗</span>
+    <span onclick="fill('公司年终聚餐能报吗')">公司年终聚餐能报吗</span>
+  </div>
+
+  <div id="out"><div class="empty">在上方输入问题开始提问</div></div>
+
+  <footer>
+    演示数据为合成制度样例，不代表任何企业真实制度。<br>
+    与 Python 脚本（报销助手_阶段1_最小原型.py）共用同一套检索思想：归一化 → 切片 → 双路检索 → 摘录原句。
+  </footer>
+</div>
+
+<script>
+// ============ 制度切片（与 Python 版 chunk_markdown 产出一致，5 片） ============
+const CHUNKS = [
+  { id:"[1]", heading:"第一章 住宿标准", text:"员工因公出差住宿标准如下：一线城市（北京、上海、广州、深圳）普通员工每晚限额 400 元，部门总监及以上每晚限额 600 元。二线城市普通员工每晚限额 300 元，总监及以上每晚限额 450 元。住宿费超标准部分不予报销，因会议酒店协议价超出限额的，需在报销时附会议通知截图并由部门总监签字确认。" },
+  { id:"[2]", heading:"第二章 交通标准", text:"员工出差可乘坐高铁二等座、动车一等座；单程 6 小时以上可申请一等座或飞机经济舱。市内交通凭票据实报销，打车需注明起止地点与事由。乘坐飞机需提前 3 天以上申请，未按时申请产生的差价由个人承担。" },
+  { id:"[3]", heading:"第三章 发票规则", text:"报销发票必须为增值税发票且抬头、税号与公司信息一致。电子发票需提交 PDF 原件，纸质发票需粘贴报销单后提交。同一张发票不得重复报销，系统会校验发票号码唯一性。餐饮发票需注明参与人员名单，单次超过 1000 元的餐费需附事前审批单。" },
+  { id:"[4]", heading:"第四章 会议活动费用", text:"会议场地租赁费、设备租赁费按合同金额报销，需附合同复印件与签到表。会议用翻译服务、速记服务凭服务合同与验收单报销。会议纪念品单价超过 200 元的需事前报总经理审批。" },
+  { id:"[5]", heading:"第五章 审批流程", text:"单笔金额 2000 元以下由直属主管审批；2000 元至 10000 元由部门总监审批；10000 元以上需分管副总审批。所有报销单需在费用发生后 30 天内提交，逾期不予受理。报销款项审批通过后 5 个工作日内打款至员工工资卡。" }
+];
+
+// ============ 查询归一化：数字 + 领域同义词（与 Python 版一致） ============
+const NUM = [["一万五","15000"],["一万","10000"],["两万","20000"],["五万","50000"],["五千","5000"],["两千","2000"],["三千","3000"]];
+const SYN = [["一晚","每晚"],["多少钱","限额"],["能报","报销"],["可以报","报销"],["报吗","报销"]];
+function normalize(q){ for(const [k,v] of NUM) q=q.split(k).join(v); for(const [k,v] of SYN) q=q.split(k).join(v); return q; }
+
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function highlight(s, grams){
+  let out = esc(s);
+  for(const g of grams){ if(g.length<2) continue;
+    out = out.split(esc(g)).join("<mark>"+esc(g)+"</mark>"); }
+  return out;
+}
+
+// ============ 检索：字符二元组对片段/句子打分（BM25 思想的轻量实现） ============
+function bigrams(s){ const r=new Set(); for(let i=0;i<s.length-1;i++) r.add(s.slice(i,i+2)); return [...r]; }
+
+function ask(){
+  const raw = document.getElementById("q").value.trim();
+  const out = document.getElementById("out");
+  if(!raw){ return; }
+  const q = normalize(raw);
+  const grams = bigrams(q);
+
+  // 片段级打分 + 命中句抽取
+  const results = CHUNKS.map(c => {
+    const sents = c.text.split(/(?<=[。！？])/).map(s=>s.trim()).filter(Boolean);
+    const hits = sents.map(s => ({ s, score: grams.reduce((n,g)=> n + (s.includes(g)?1:0), 0) }))
+                      .filter(x => x.score > 0).sort((a,b)=>b.score-a.score);
+    const total = grams.reduce((n,g)=> n + (c.text.includes(g)?1:0), 0);
+    return { ...c, total, hits };
+  }).filter(r => r.total > 0).sort((a,b)=> b.total - a.total).slice(0,3);
+
+  if(results.length === 0){
+    out.innerHTML = '<div class="none">现行制度未覆盖该问题，请联系财务确认。（样例制度中未检索到相关条款）</div>';
+    return;
+  }
+  out.innerHTML = results.map((r,i) => {
+    const sentsHtml = r.hits.slice(0,3).map(h =>
+      "<p>"+highlight(h.s, grams)+"</p>").join("");
+    return `<div class="card">
+      <div class="head"><b>${i+1}. ${esc(r.heading)}</b><small>${esc(r.id)} · 匹配度 ${r.total} · 命中 ${r.hits.length} 句</small></div>
+      <div class="sents">${sentsHtml}</div>
+      <details><summary>展开该章全部条款</summary><div class="full">${esc(r.text)}</div></details>
+    </div>`;
+  }).join("");
+}
+
+function fill(t){ document.getElementById("q").value = t; ask(); }
+document.getElementById("q").addEventListener("keydown", e => { if(e.key==="Enter") ask(); });
+</script>
+</body>
+</html>

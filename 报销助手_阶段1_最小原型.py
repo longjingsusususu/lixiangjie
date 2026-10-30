@@ -309,6 +309,11 @@ def extractive_answer(question: str, hits: list[dict]) -> str:
     for k, v in {"一万五": "15000", "一万": "10000", "两万": "20000", "五万": "50000",
                  "五千": "5000", "两千": "2000", "三千": "3000"}.items():
         q = q.replace(k, v)
+    # 领域同义词表：把口语词归一到制度用语。
+    # （阶段 2 这张表放进管理员的制度配置里，由管理员维护，而不是硬编码）
+    for k, v in {"一晚": "每晚", "多少钱": "限额", "能报": "报销", "可以报": "报销",
+                 "报吗": "报销", "住宿": "住宿标准"}.items():
+        q = q.replace(k, v)
     q_tokens = [t for t in jieba.lcut(q) if len(t.strip()) >= 2]        # 词级匹配
     grams = list({q[i:i + 2] for i in range(len(q) - 1)})               # 字符二元组（兜底用）
 
