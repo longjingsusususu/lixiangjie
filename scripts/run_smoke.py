@@ -27,7 +27,19 @@ CASES = [
     "agent_trace_smoke.py",   # Agent 编排轨迹（58 项）
 ]
 
-SUMMARY = re.compile(r"(\d+)\s*(?:项|通过)?\s*[/，,]\s*(\d+)\s*(?:项)?\s*(?:失败|失败)")
+def parse_summary(stdout: str):
+    """兼容两种汇总格式：
+       结果：通过 20 项，失败 0 项
+       结果：38 通过 / 0 失败
+    """
+    for line in reversed(stdout.splitlines()):
+        if "结果" not in line:
+            continue
+        nums = [int(n) for n in re.findall(r"\d+", line)]
+        if len(nums) >= 2:
+            return nums[0], nums[1]
+        break
+    return 0, 0
 
 
 def main() -> int:
@@ -50,13 +62,7 @@ def main() -> int:
         tail = proc.stdout.strip().splitlines()[-6:]
         print("\n".join("  " + line for line in tail))
 
-        passed = failed = 0
-        for line in reversed(proc.stdout.splitlines()):
-            if "结果" in line:
-                m = SUMMARY.search(line)
-                if m:
-                    passed, failed = int(m.group(1)), int(m.group(2))
-                break
+        passed, failed = parse_summary(proc.stdout)
         if not failed and proc.returncode != 0:
             failed = 1  # 脚本崩溃但没打印汇总：按失败计
         total_pass += passed
