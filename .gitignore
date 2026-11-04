@@ -27,3 +27,6 @@ data/*.db-shm
 .vscode/
 .DS_Store
 Thumbs.db
+
+# ---- 本地归档（并入仓库前的原始散件与旧代码副本，不入库）----
+.archive/
