@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>无权访问 · 会议活动需求管理后台</title>
+<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="login-body">
+<div class="login-card center">
+  <div class="code403">403</div>
+  <h1>当前角色无权访问</h1>
+  <p class="sub">
+    你的角色是「{{ role_cn }}」。
+    管理后台只对管理员开放；查询与登记请回员工端。
+  </p>
+  <p class="sub mono">错误码 40302 · 服务端已记录本次尝试（R3 越权尝试规则）</p>
+  <div class="row">
+    <a class="btn primary" href="/">回员工端</a>
+    <a class="btn" href="/logout">换个账号</a>
+  </div>
+</div>
+</body>
+</html>
