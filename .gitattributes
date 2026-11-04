@@ -1,0 +1,13 @@
+# 统一按 LF 存储，避免 Windows 换行符污染 diff
+* text=auto eol=lf
+
+*.py   text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css  text eol=lf
+
+# 二进制文件不做换行转换
+*.png  binary
+*.docx binary
+*.db   binary

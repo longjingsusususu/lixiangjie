@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}批量导入{% endblock %}
+{% block body %}
+<header class="page-head">
+  <div>
+    <h1>批量导入</h1>
+    <p>支持 .md（阶段 1 格式）与 .csv　·　先预检再入库，重复编号自动跳过（幂等）</p>
+  </div>
+  <a class="btn" href="/api/admin/items/template.csv">下载 CSV 模板</a>
+</header>
+
+<section class="panel">
+  <div class="panel-head"><h2>上传文件</h2><span class="hint">上限 2MB，UTF-8 编码</span></div>
+  <form id="upForm" class="upload">
+    <input type="file" id="file" accept=".md,.csv" required>
+    <label class="chk"><input type="checkbox" id="dry" checked> 仅预检（不写库）</label>
+    <button class="btn primary" type="submit">开始</button>
+  </form>
+  <div id="report" class="report" hidden></div>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>编号映射表</h2>
+    <span class="hint">三套工具无统一编号（f30）：原始单号 → 系统编号</span>
+  </div>
+  <form id="mapForm" class="filters">
+    <input id="m_tool" placeholder="来源工具（服务台/台账/文件库）">
+    <input id="m_ext" placeholder="原始单号（SD-2026-0112）">
+    <input id="m_item" placeholder="系统编号（EQ-01）">
+    <button class="btn" type="submit">新增映射</button>
+  </form>
+  <table class="tbl">
+    <thead><tr><th>来源工具</th><th>原始单号</th><th>系统编号</th><th>建立时间</th><th>操作</th></tr></thead>
+    <tbody>
+      {% for m in mappings %}
+      <tr>
+        <td>{{ m.source_tool }}</td>
+        <td class="mono">{{ m.external_no }}</td>
+        <td class="mono">{{ m.item_no }}</td>
+        <td class="sub">{{ m.created_at }}</td>
+        <td><button class="btn sm danger" onclick="delMap({{ m.id }})">删除</button></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty">还没有映射（跨区试点时才必须，单区可暂不建）</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<script>
+/* 上传：先预检 → 展示报告 → 报告里给"确认导入"按钮 */
+document.getElementById("upForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const f = document.getElementById("file").files[0];
+  if (!f) return;
+  await upload(f, document.getElementById("dry").checked);
+};
+
+async function upload(file, dryRun) {
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("dry_run", dryRun ? "true" : "false");
+  const box = document.getElementById("report");
+  box.hidden = false;
+  box.innerHTML = `<div class="sub">正在${dryRun ? "预检" : "导入"}…</div>`;
+
+  const res = await fetch("/api/admin/items/import", {method: "POST", body: fd});
+  const d = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    box.innerHTML = `<div class="flash err">[${d.code || res.status}] ${d.message || "上传失败"}</div>`;
+    return;
+  }
+
+  let html = `<div class="flash ok">文件：${d.filename}　共 ${d.total} 行　
+    可导入 ${d.ok} 行　重复跳过 ${d.dup} 行　错误 ${d.errors.length} 行
+    ${d.inserted !== undefined ? `　实际入库 ${d.inserted} 行` : "（预检，未写库）"}</div>`;
+
+  if (d.errors.length) {
+    html += `<table class="tbl"><thead><tr><th>行号</th><th>编号</th><th>原因</th></tr></thead><tbody>`;
+    d.errors.forEach(e => {
+      html += `<tr><td class="mono">${e.line || "—"}</td><td class="mono">${e.item_no}</td>
+               <td class="sub">${e.reason}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+  if (d.duplicates.length) {
+    html += `<div class="sub" style="margin-top:10px">重复跳过：` +
+      d.duplicates.map(x => `${x.item_no}（第 ${x.line || "—"} 行）`).join("、") + `</div>`;
+  }
+  if (d.preview && d.preview.length) {
+    html += `<div class="sub" style="margin-top:10px">预览前 ${d.preview.length} 条：` +
+      d.preview.map(x => x.item_no).join("、") + `</div>`;
+  }
+  if (d.dry_run && d.ok > 0) {
+    html += `<button class="btn primary" style="margin-top:12px"
+              onclick="doImport('${d.filename}')">确认导入 ${d.ok} 行</button>`;
+    window.__pendingFile = document.getElementById("file").files[0];
+  }
+  box.innerHTML = html;
+}
+
+function doImport() {
+  if (!window.__pendingFile) return;
+  upload(window.__pendingFile, false).then(() => setTimeout(() => location.reload(), 1200));
+}
+
+/* 映射表 */
+document.getElementById("mapForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const body = {
+    source_tool: document.getElementById("m_tool").value.trim(),
+    external_no: document.getElementById("m_ext").value.trim(),
+    item_no: document.getElementById("m_item").value.trim(),
+  };
+  const res = await fetch("/api/admin/mappings", {
+    method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)
+  });
+  const d = await res.json().catch(() => ({}));
+  if (res.ok) location.reload();
+  else alert(`[${d.code || res.status}] ${d.message || "新增失败"}`);
+};
+
+async function delMap(id) {
+  if (!confirm("删除这条映射？")) return;
+  const res = await fetch(`/api/admin/mappings/${id}`, {method: "DELETE"});
+  const d = await res.json().catch(() => ({}));
+  if (res.ok) location.reload();
+  else alert(`[${d.code || res.status}] ${d.message || "删除失败"}`);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Agent 工具{% endblock %}
+{% block body %}
+<div class="head">
+  <div>
+    <h1>Agent 工具登记表</h1>
+    <p class="sub">共 {{ total }} 个工具 · 只读可并行、写类串行 · 人类保留权 6 项不暴露</p>
+  </div>
+  <span class="pill">A 档：确定性工具层（一期零 LLM）</span>
+</div>
+
+<div class="card">
+  <h2>顺序约束怎么保证的</h2>
+  <div class="flow">
+    <span class="node">find_mapping</span><i>→</i>
+    <span class="node">upsert_item</span><i>→</i>
+    <span class="node">check_completeness</span><i>→</i>
+    <span class="node hot">validate_handover<span class="tag">发票据</span></span><i>→</i>
+    <span class="node">create_handover<span class="tag">必须带票</span></span>
+  </div>
+  <p class="hint">
+    票据 5 分钟有效、绑 <code>item_no+接收人+截止时间</code> 的哈希、用后作废。
+    伪造票 / 重放 / 换参数 / 跳过校验，服务端分别返回 41201 / 41203 / 41204 / 41201，
+    <b>与模型是否"记得提示词"无关</b>。
+  </p>
+</div>
+
+<div class="card">
+  <h2>红队用例（点一下就跑，看服务端怎么拒）</h2>
+  <div class="rt">
+    <button class="btn ghost" data-tool="create_handover"
+            data-args='{"ticket":"tk_forged","item_no":"LS-02","receiver":"傅景","deadline":"2026-11-05"}'>
+      R1 伪造票据直接建单</button>
+    <button class="btn ghost" data-tool="create_handover"
+            data-args='{"ticket":"","item_no":"LS-02","receiver":"傅景","deadline":"2026-11-05"}'>
+      R2 不带票直接建单</button>
+    <button class="btn ghost" data-tool="validate_handover"
+            data-args='{"item_no":"LS-02","receiver":"傅景","deadline":"2026-11-05"}'>
+      R3 未定版项请求校验</button>
+    <button class="btn ghost" data-tool="confirm_item"
+            data-args='{"item_no":"LS-02"}'>
+      R4 让它代签确认（未注册能力）</button>
+    <button class="btn ghost" data-tool="upsert_item"
+            data-args='{"item_no":"LS-09","fields":{"content":"临时加一项","change_note":"口头要求"},"mapping_checked":false}'>
+      R5 不查重直接新增</button>
+  </div>
+</div>
+
+<div class="card">
+  <h2>手动调用</h2>
+  <div class="filters">
+    <select id="tool">
+      {% for c in cards %}<option value="{{ c.name }}">{{ c.name }}（{{ c.kind_cn }}）</option>{% endfor %}
+    </select>
+    <input id="args" class="grow" value='{"query":"双语主持"}' spellcheck="false">
+    <button class="btn" id="run">执行</button>
+  </div>
+  <pre id="out" class="out">等待调用…</pre>
+</div>
+
+<div class="card">
+  <h2>工具清单</h2>
+  <table class="tbl">
+    <thead><tr><th>工具</th><th>类型</th><th>说明</th><th>必填参数</th><th>可调用角色</th></tr></thead>
+    <tbody>
+    {% for c in cards %}
+      <tr>
+        <td><code>{{ c.name }}</code></td>
+        <td><span class="k {{ c.kind }}">{{ c.kind_cn }}</span></td>
+        <td class="clip2">{{ c.description }}</td>
+        <td class="mono">{{ c.required|join(', ') }}</td>
+        <td>{{ c.roles|join(' / ') if c.roles else '任意登录角色' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p class="hint">刻意不暴露（调用即 40405）：{{ not_exposed|join(' · ') }}</p>
+</div>
+
+<script>
+const cookieTok = null;
+function run(tool, args) {
+  const out = document.getElementById('out');
+  out.textContent = '执行中…';
+  fetch('/api/tools/' + tool, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: args
+  }).then(async r => {
+    const t = await r.text();
+    out.textContent = 'HTTP ' + r.status + '\n' + t;
+  }).catch(e => out.textContent = '请求失败：' + e);
+}
+document.getElementById('run').onclick = () =>
+  run(document.getElementById('tool').value, document.getElementById('args').value);
+document.querySelectorAll('.rt .btn').forEach(b => {
+  b.onclick = () => {
+    document.getElementById('tool').value = b.dataset.tool;
+    document.getElementById('args').value = b.dataset.args;
+    run(b.dataset.tool, b.dataset.args);
+  };
+});
+document.getElementById('tool').onchange = () => {
+  const presets = {
+    search_items: '{"query":"双语主持","limit":3}',
+    get_item: '{"item_no":"LS-02"}',
+    check_completeness: '{"item_no":"LS-02"}',
+    diff_sources: '{"item_no":"LS-02"}',
+    find_mapping: '{"source_tool":"ledger","source_ref":"LEDGER-10月"}',
+    validate_handover: '{"item_no":"CT-01","receiver":"傅景","deadline":"2026-11-05"}',
+    create_handover: '{"ticket":"先把 validate 返回的票贴进来","item_no":"CT-01","receiver":"傅景","deadline":"2026-11-05"}',
+    upsert_item: '{"item_no":"LS-02","fields":{"owner":"傅景","change_note":"群消息确认由傅景接手"},"mapping_checked":true}',
+    manage_exception: '{"action":"open","item_no":"LS-02","reason":"三源 owner 不一致"}',
+    request_confirm: '{"item_no":"LS-02","owner":"傅景","fields":["owner","status"],"message":"请确认双语主持是否沿用"}'
+  };
+  document.getElementById('args').value = presets[document.getElementById('tool').value] || '{}';
+};
+</script>
+{% endblock %}
