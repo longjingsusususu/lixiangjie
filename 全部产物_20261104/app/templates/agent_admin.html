@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Agent 轨迹{% endblock %}
+{% block body %}
+<div class="head">
+  <div>
+    <h1>Agent 执行轨迹</h1>
+    <p class="sub">一次任务一条 run · 每轮决策一步 step · 写操作必须人工确认后才落库</p>
+  </div>
+  <span class="pill">Harness 薄循环 · 最多 5 轮 · 全量留痕</span>
+</div>
+
+<div class="card">
+  <h2>按工具聚合（阶段 5 分析的数据源）</h2>
+  {% if stats %}
+  <table>
+    <tr><th>工具</th><th>调用次数</th><th>成功率</th><th>平均耗时</th><th>最大耗时</th></tr>
+    {% for s in stats %}
+    <tr>
+      <td class="mono">{{ s.tool }}</td>
+      <td>{{ s.calls }}</td>
+      <td>{{ ((s.ok_calls or 0) * 100 // s.calls) if s.calls else 0 }}%</td>
+      <td>{{ s.avg_ms }} ms</td>
+      <td>{{ s.max_ms }} ms</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <p class="hint">数据来自 <code>agent_steps</code>（phase='act'）。不需要额外埋点——循环跑的时候就在记账。</p>
+  {% else %}
+  <p class="hint">还没有执行记录。去 <a href="/agent">员工对话页</a> 跑一句试试，或直接在这里点下面的示例。</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>最近任务</h2>
+  <form class="filters" method="get" action="/admin/agent">
+    <select name="status">
+      <option value="">全部状态</option>
+      {% for k, v in status_cn.items() %}
+      <option value="{{ k }}" {{ 'selected' if status==k }}>{{ v }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn">筛选</button>
+    <span class="grow"></span>
+    <span class="hint">共 {{ runs|length }} 条（最近 30 条）</span>
+  </form>
+  <table>
+    <tr><th>时间</th><th>谁</th><th>诉求</th><th>意图</th><th>决策</th><th>轮次</th><th>耗时</th><th>状态</th><th></th></tr>
+    {% for r in runs %}
+    <tr>
+      <td class="mono">{{ r.created_at[5:16] }}</td>
+      <td>{{ r.display_name }}</td>
+      <td class="clip">{{ r.goal }}</td>
+      <td><span class="k">{{ r.intent }}</span></td>
+      <td><span class="k {{ 'validate' if r.decider=='llm' }}">{{ r.decider }}</span></td>
+      <td>{{ r.rounds }}/5</td>
+      <td class="mono">{{ r.total_ms or 0 }}ms</td>
+      <td><span class="k {{ 'write' if r.status in ('cancelled','max_rounds') }}">{{ status_cn.get(r.status, r.status) }}</span></td>
+      <td class="ops"><a href="/admin/agent?run_id={{ r.id }}{{ '&status=' + status if status }}">看轨迹</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+{% if detail %}
+<div class="card">
+  <h2>轨迹回放 · {{ detail.id }}</h2>
+  <p class="hint">
+    「{{ detail.goal }}」｜{{ detail.display_name }}（{{ detail.role }}）｜
+    意图 {{ detail.intent }}｜决策方 {{ detail.decider }}｜状态 {{ status_cn.get(detail.status, detail.status) }}｜
+    共 {{ detail.rounds }} 轮｜总耗时 {{ detail.total_ms or 0 }}ms
+  </p>
+  <table>
+    <tr><th>轮</th><th>阶段</th><th>工具</th><th>参数</th><th>结果摘要</th><th>耗时</th><th>码</th></tr>
+    {% for s in steps %}
+    <tr>
+      <td>{{ s.round_no }}</td>
+      <td><span class="k {{ 'read' if s.phase=='decide' else ('validate' if s.phase=='interrupt' else ('write' if s.phase=='final' else '')) }}">{{ s.phase }}</span></td>
+      <td class="mono">{{ s.tool or '—' }}</td>
+      <td class="clip2 mono">{{ (s.args_json or '—')[:90] }}</td>
+      <td class="clip2">{{ s.digest or '—' }}</td>
+      <td class="mono">{{ s.duration_ms or 0 }}ms</td>
+      <td class="mono">{{ s.code or '' }}{% if s.ok == 1 %}✓{% elif s.ok == 0 %}✗{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% if detail.final_answer %}
+  <pre class="out">{{ detail.final_answer }}</pre>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>三条典型轨迹（点一下直接跑，看真实日志）</h2>
+  <div class="rt">
+    <button class="btn ghost" data-goal="双语主持相关的需求有哪些？">A · 只查清单（不写）</button>
+    <button class="btn ghost" data-goal="把 LS-02 交接给傅景，截止 11-05">B · 建交接（会中断等确认）</button>
+    <button class="btn ghost" data-goal="EQ-05 的翻译间到底几间？">C · 三源冲突（只报不裁）</button>
+  </div>
+  <p class="hint">跑完刷新本页即可看到新任务与逐步耗时。</p>
+</div>
+
+<script>
+/* 管理端直接点跑：用 cookie 里的 JWT 调 SSE，结束刷新页面看日志 */
+document.querySelectorAll('[data-goal]').forEach(btn => {
+  btn.onclick = async () => {
+    btn.disabled = true; const old = btn.textContent; btn.textContent = '执行中…';
+    const tok = document.cookie.split('; ').find(x => x.startsWith('mt_token='));
+    const h = {'Content-Type': 'application/json'};
+    if (tok) h['Authorization'] = 'Bearer ' + decodeURIComponent(tok.split('=')[1]);
+    try {
+      const r = await fetch('/api/agent/chat', {method: 'POST', headers: h,
+        body: JSON.stringify({goal: btn.dataset.goal})});
+      const text = await r.text();
+      alert(text.includes('event: interrupt')
+        ? '已到中断点：写操作需员工确认后才会执行。刷新本页看轨迹。'
+        : '已执行完成。刷新本页看轨迹。');
+    } catch (e) { alert('执行失败：' + e); }
+    finally { btn.disabled = false; btn.textContent = old; location.reload(); }
+  };
+});
+</script>
+{% endblock %}

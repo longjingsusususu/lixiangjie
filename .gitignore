@@ -33,3 +33,8 @@ Thumbs.db
 
 # ---- 打包产物 ----
 *.zip
+
+# ---- MVP 运行时 ----
+mvp/*.db
+mvp/*.db-wal
+mvp/*.db-shm
