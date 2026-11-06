@@ -43,6 +43,16 @@ def shade(cell, fill):
     tcPr.append(el)
 
 
+def shade_par(p, fill):
+    """给段落加底色（代码块/示意图用）。"""
+    pPr = p._p.get_or_add_pPr()
+    el = OxmlElement("w:shd")
+    el.set(qn("w:val"), "clear")
+    el.set(qn("w:color"), "auto")
+    el.set(qn("w:fill"), fill)
+    pPr.append(el)
+
+
 def cell_margins(table, top=40, bottom=40, left=90, right=90):
     tblPr = table._tbl.tblPr
     mar = OxmlElement("w:tblCellMar")
@@ -158,7 +168,14 @@ def parse_md(md):
             if rows:
                 blocks.append(("table", rows))
             continue
-        if line.startswith("#"):
+        if line.strip().startswith("```"):           # 代码/示意图块
+            i += 1
+            buf = []
+            while i < len(lines) and not lines[i].strip().startswith("```"):
+                buf.append(lines[i])
+                i += 1
+            blocks.append(("code", "\n".join(buf)))
+        elif line.startswith("#"):
             level = len(line) - len(line.lstrip("#"))
             blocks.append((f"h{level}", line[level:].strip()))
         elif line.startswith(">"):
@@ -364,6 +381,17 @@ def build(md_path, out_path, doc_kind="", subtitle=""):
             p.paragraph_format.left_indent = Cm(0.75)
             p.paragraph_format.space_after = Pt(3)
             add_rich(p, payload)
+        elif kind == "code":
+            p = doc.add_paragraph()
+            p.paragraph_format.left_indent = Cm(0.4)
+            p.paragraph_format.space_before = Pt(4)
+            p.paragraph_format.space_after = Pt(8)
+            shade_par(p, "F4F7FB")
+            for li, ln in enumerate(payload.split("\n")):
+                if li:
+                    p.add_run().add_break()
+                r = p.add_run(ln if ln else " ")
+                set_font(r, 9, False, RGBColor(0x1F, 0x29, 0x37), east="Consolas")
         elif kind == "quote":
             p = doc.add_paragraph()
             p.paragraph_format.left_indent = Cm(0.6)

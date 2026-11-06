@@ -34,6 +34,9 @@ table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:13px;
 th,td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;line-height:1.65}
 th{background:#e8eef6;color:var(--navy);font-weight:700;text-align:left}
 tbody tr:nth-child(even){background:#f7f9fc}
+pre{background:#f4f7fb;border:1px solid #dbe3ee;border-radius:4px;padding:12px 14px;
+  font-family:"Cascadia Mono",Consolas,"Courier New",monospace;font-size:11.5px;
+  line-height:1.5;white-space:pre;overflow-x:auto;margin:12px 0 16px}
 blockquote{margin:12px 0;padding:10px 16px;border-left:4px solid #9db2cc;
            background:#f1f5fa;color:var(--gray);font-size:13.5px;border-radius:0 8px 8px 0}
 hr{border:0;border-top:1px solid var(--line);margin:20px 0}
@@ -88,6 +91,16 @@ def render(md: str) -> str:
                 out.append("<tr>" + "".join(f"<td>{inline(c)}</td>" for c in r) + "</tr>")
             out.append("</tbody></table>")
             continue
+        if line.strip().startswith("```"):
+            close_list()
+            i += 1
+            buf = []
+            while i < len(lines) and not lines[i].strip().startswith("```"):
+                buf.append(lines[i])
+                i += 1
+            i += 1
+            out.append("<pre>" + html.escape("\n".join(buf)) + "</pre>")
+            continue
         if line.startswith("#"):
             close_list()
             level = len(line) - len(line.lstrip("#"))
@@ -108,13 +121,13 @@ def render(md: str) -> str:
                 close_list()
                 out.append("<ul>")
                 in_list = "ul"
-            out.append(f"<li>{inline(re.sub(r'^[-*]\\s+', '', line))}</li>")
+            out.append(f"<li>{inline(re.sub(r'^[-*]\s+', '', line))}</li>")
         elif re.match(r"^\d+\.\s+", line):
             if in_list != "ol":
                 close_list()
                 out.append("<ol>")
                 in_list = "ol"
-            out.append(f"<li>{inline(line)}</li>")
+            out.append(f"<li>{inline(re.sub(r'^\d+\.\s+', '', line))}</li>")
         elif re.fullmatch(r"-{3,}", line.strip()):
             close_list()
             out.append("<hr>")

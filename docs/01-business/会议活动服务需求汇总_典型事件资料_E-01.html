@@ -25,6 +25,9 @@ table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:13px;
 th,td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;line-height:1.65}
 th{background:#e8eef6;color:var(--navy);font-weight:700;text-align:left}
 tbody tr:nth-child(even){background:#f7f9fc}
+pre{background:#f4f7fb;border:1px solid #dbe3ee;border-radius:4px;padding:12px 14px;
+  font-family:"Cascadia Mono",Consolas,"Courier New",monospace;font-size:11.5px;
+  line-height:1.5;white-space:pre;overflow-x:auto;margin:12px 0 16px}
 blockquote{margin:12px 0;padding:10px 16px;border-left:4px solid #9db2cc;
            background:#f1f5fa;color:var(--gray);font-size:13.5px;border-radius:0 8px 8px 0}
 hr{border:0;border-top:1px solid var(--line);margin:20px 0}
@@ -98,11 +101,11 @@ code{background:#f3f4f6;color:#8b2e2e;padding:1px 5px;border-radius:4px;font-siz
 </tbody></table>
 <h3>2.1 事件经过（按被访者描述复原，未逐节点核实）</h3>
 <ol>
-<li>1. <strong>议程确认</strong>：客户与业务侧确认议程，形成初步需求清单；</li>
-<li>2. <strong>嘉宾需求</strong>：按议程拆分嘉宾侧需求（含敏感个人需求，试点明确不自动确认，f05）；</li>
-<li>3. <strong>供应商交接</strong>：把需求清单交供应商执行——被访者认为这是<strong>问题高发点</strong>；</li>
-<li>4. <strong>执行</strong>：现场按清单执行，变更以口头/群消息方式发生；</li>
-<li>5. <strong>反馈</strong>：执行结果回流，但与最初清单的对应关系不清。</li>
+<li><strong>议程确认</strong>：客户与业务侧确认议程，形成初步需求清单；</li>
+<li><strong>嘉宾需求</strong>：按议程拆分嘉宾侧需求（含敏感个人需求，试点明确不自动确认，f05）；</li>
+<li><strong>供应商交接</strong>：把需求清单交供应商执行——被访者认为这是<strong>问题高发点</strong>；</li>
+<li><strong>执行</strong>：现场按清单执行，变更以口头/群消息方式发生；</li>
+<li><strong>反馈</strong>：执行结果回流，但与最初清单的对应关系不清。</li>
 </ol>
 <blockquote>被访者原话：&quot;先观察每个交接点，而不是直接上自动化……自动化如果建在没看清的流程上，只会把错误固化下来。&quot;（f01）</blockquote>
 <h3>2.2 五个交接节点的证据状态</h3>
@@ -120,71 +123,71 @@ code{background:#f3f4f6;color:#8b2e2e;padding:1px 5px;border-radius:4px;font-siz
 <p>严重度定义：<strong>S1</strong> 直接导致验收不成立或错误外溢；<strong>S2</strong> 阻塞功能上线或口径定稿；<strong>S3</strong> 过程性问题，影响取证效率。</p>
 <h3>P-01　同一需求在多环节反复录入比对（S1）</h3>
 <ul>
-<li>- <strong>现象</strong>：同一份需求在议程确认、嘉宾需求、供应商交接三个环节各录一次，靠人工比对是否一致。</li>
-<li>- <strong>原话</strong>：&quot;最核心的目标是减少会议服务需求的重复核对，同时必须保留人工确认和可追溯来源。&quot;（f00）</li>
-<li>- <strong>两种可能解读（被访者要求先澄清）</strong>：① 同一需求被反复录入比对；② 需求变更后各方口径对不上。二者对应的试点范围与验收标准完全不同。</li>
-<li>- <strong>影响</strong>：重复录入工时；比对靠人眼，漏检不可控。</li>
-<li>- <strong>需要的证据</strong>：三个环节各自的原始清单 + 同一需求项的跨环节对照样本。</li>
-<li>- <strong>责任角色</strong>：林亦舟（现场记录）、唐映秋（交接台账）。</li>
+<li><strong>现象</strong>：同一份需求在议程确认、嘉宾需求、供应商交接三个环节各录一次，靠人工比对是否一致。</li>
+<li><strong>原话</strong>：&quot;最核心的目标是减少会议服务需求的重复核对，同时必须保留人工确认和可追溯来源。&quot;（f00）</li>
+<li><strong>两种可能解读（被访者要求先澄清）</strong>：① 同一需求被反复录入比对；② 需求变更后各方口径对不上。二者对应的试点范围与验收标准完全不同。</li>
+<li><strong>影响</strong>：重复录入工时；比对靠人眼，漏检不可控。</li>
+<li><strong>需要的证据</strong>：三个环节各自的原始清单 + 同一需求项的跨环节对照样本。</li>
+<li><strong>责任角色</strong>：林亦舟（现场记录）、唐映秋（交接台账）。</li>
 </ul>
 <h3>P-02　变更发生后各方口径不一致（S1）</h3>
 <ul>
-<li>- <strong>现象</strong>：变更以口头或群消息发生，需求清单未同步更新，执行侧仍按旧版准备。</li>
-<li>- <strong>原话</strong>：被访者将&quot;重复核对&quot;与&quot;变更后口径对不上&quot;并列为两大痛点方向。</li>
-<li>- <strong>影响</strong>：返工、现场补救、责任无法归属。</li>
-<li>- <strong>需要的证据</strong>：至少一次含变更的完整批次记录（变更前版本、变更通知方式、执行侧收到的版本）。</li>
-<li>- <strong>责任角色</strong>：唐映秋。</li>
+<li><strong>现象</strong>：变更以口头或群消息发生，需求清单未同步更新，执行侧仍按旧版准备。</li>
+<li><strong>原话</strong>：被访者将&quot;重复核对&quot;与&quot;变更后口径对不上&quot;并列为两大痛点方向。</li>
+<li><strong>影响</strong>：返工、现场补救、责任无法归属。</li>
+<li><strong>需要的证据</strong>：至少一次含变更的完整批次记录（变更前版本、变更通知方式、执行侧收到的版本）。</li>
+<li><strong>责任角色</strong>：唐映秋。</li>
 </ul>
 <h3>P-03　交接点缺责任人与确认状态（S1）</h3>
 <ul>
-<li>- <strong>现象</strong>：五个交接节点中，谁录入、谁确认、确认到什么程度，均无书面口径。</li>
-<li>- <strong>原话</strong>：&quot;每个交接点具体谁录入、谁确认、耗时多少，尚未核实。&quot;（turn-12）</li>
-<li>- <strong>影响</strong>：验收的两条硬标准（责任人与确认状态）在现状下无法判定合格与否。</li>
-<li>- <strong>需要的证据</strong>：交接台账 + 交接单据样本。</li>
-<li>- <strong>责任角色</strong>：唐映秋（台账）、傅景（判定口径）。</li>
+<li><strong>现象</strong>：五个交接节点中，谁录入、谁确认、确认到什么程度，均无书面口径。</li>
+<li><strong>原话</strong>：&quot;每个交接点具体谁录入、谁确认、耗时多少，尚未核实。&quot;（turn-12）</li>
+<li><strong>影响</strong>：验收的两条硬标准（责任人与确认状态）在现状下无法判定合格与否。</li>
+<li><strong>需要的证据</strong>：交接台账 + 交接单据样本。</li>
+<li><strong>责任角色</strong>：唐映秋（台账）、傅景（判定口径）。</li>
 </ul>
 <h3>P-04　验收标准缺执行层细则（S2）</h3>
 <ul>
-<li>- <strong>现象</strong>：验收标准已明确为&quot;50 个服务项全部具备责任人和确认状态、变更影响可追溯&quot;（f02），但<strong>怎么抽样、谁判定&quot;确认状态&quot;合格</strong>未定。</li>
-<li>- <strong>影响</strong>：验收无法执行，容易变成签字走形式。</li>
-<li>- <strong>需要的证据</strong>：抽样方案、判定人名单、不合格处理规则。</li>
-<li>- <strong>责任角色</strong>：唐映秋 + 傅景。</li>
+<li><strong>现象</strong>：验收标准已明确为&quot;50 个服务项全部具备责任人和确认状态、变更影响可追溯&quot;（f02），但<strong>怎么抽样、谁判定&quot;确认状态&quot;合格</strong>未定。</li>
+<li><strong>影响</strong>：验收无法执行，容易变成签字走形式。</li>
+<li><strong>需要的证据</strong>：抽样方案、判定人名单、不合格处理规则。</li>
+<li><strong>责任角色</strong>：唐映秋 + 傅景。</li>
 </ul>
 <h3>P-05　&quot;变更影响可追溯&quot;的颗粒度未定（S2）</h3>
 <ul>
-<li>- <strong>现象</strong>：只记录变更前后内容，还是连审批链一起留痕？两种做法的工作量差一个量级。</li>
-<li>- <strong>影响</strong>：直接影响验收工作量与系统字段设计。</li>
-<li>- <strong>需要的证据</strong>：一次真实变更的完整链路（谁提、谁批、谁执行、通知了谁）。</li>
-<li>- <strong>责任角色</strong>：傅景。</li>
+<li><strong>现象</strong>：只记录变更前后内容，还是连审批链一起留痕？两种做法的工作量差一个量级。</li>
+<li><strong>影响</strong>：直接影响验收工作量与系统字段设计。</li>
+<li><strong>需要的证据</strong>：一次真实变更的完整链路（谁提、谁批、谁执行、通知了谁）。</li>
+<li><strong>责任角色</strong>：傅景。</li>
 </ul>
 <h3>P-06　决策链只闭合了一半（S2）</h3>
 <ul>
-<li>- <strong>现象</strong>：三类决策已有归属——试点范围由顾明岚定、傅景可叫停、叶书确认结果用途（f04）；但<strong>推广审批链未核实</strong>，预算权与最终验收权归属也未确认。</li>
-<li>- <strong>原话</strong>：&quot;不是&#x27;否决方案&#x27;，而是傅景那边可以在试点过程中叫停。&quot;（turn-4）</li>
-<li>- <strong>影响</strong>：试点可启动，推广无路径；预算超支时无人可批。</li>
-<li>- <strong>需要的证据</strong>：决策清单（定范围 / 叫停 / 确认用途 / 推广审批 / 预算）。</li>
-<li>- <strong>责任角色</strong>：顾明岚。</li>
+<li><strong>现象</strong>：三类决策已有归属——试点范围由顾明岚定、傅景可叫停、叶书确认结果用途（f04）；但<strong>推广审批链未核实</strong>，预算权与最终验收权归属也未确认。</li>
+<li><strong>原话</strong>：&quot;不是&#x27;否决方案&#x27;，而是傅景那边可以在试点过程中叫停。&quot;（turn-4）</li>
+<li><strong>影响</strong>：试点可启动，推广无路径；预算超支时无人可批。</li>
+<li><strong>需要的证据</strong>：决策清单（定范围 / 叫停 / 确认用途 / 推广审批 / 预算）。</li>
+<li><strong>责任角色</strong>：顾明岚。</li>
 </ul>
 <h3>P-07　结果用途未确认则不予放行（S2）</h3>
 <ul>
-<li>- <strong>现象</strong>：叶书未确认结果用途前，业务负责人不会签字放行试点。</li>
-<li>- <strong>影响</strong>：这是试点的<strong>前置条件</strong>，不是收尾动作。</li>
-<li>- <strong>需要的证据</strong>：结果用途说明（谁用、用于什么决策、是否对外）。</li>
-<li>- <strong>责任角色</strong>：叶书。</li>
+<li><strong>现象</strong>：叶书未确认结果用途前，业务负责人不会签字放行试点。</li>
+<li><strong>影响</strong>：这是试点的<strong>前置条件</strong>，不是收尾动作。</li>
+<li><strong>需要的证据</strong>：结果用途说明（谁用、用于什么决策、是否对外）。</li>
+<li><strong>责任角色</strong>：叶书。</li>
 </ul>
 <h3>P-08　全部量化基线缺失（S1）</h3>
 <ul>
-<li>- <strong>现象</strong>：频次、单次耗时、涉及服务项数量三项均无实测值；被访者在三轮中一致表示&quot;尚未核实，不能凭印象编数字&quot;。</li>
-<li>- <strong>影响</strong>：无法设定任何改善目标；无法计算收益；任何百分比都不可信。</li>
-<li>- <strong>需要的证据</strong>：见第 5 章指标表逐项取数来源。</li>
-<li>- <strong>责任角色</strong>：林亦舟（现场）、唐映秋（台账）、秦芮（数据质量）。</li>
+<li><strong>现象</strong>：频次、单次耗时、涉及服务项数量三项均无实测值；被访者在三轮中一致表示&quot;尚未核实，不能凭印象编数字&quot;。</li>
+<li><strong>影响</strong>：无法设定任何改善目标；无法计算收益；任何百分比都不可信。</li>
+<li><strong>需要的证据</strong>：见第 5 章指标表逐项取数来源。</li>
+<li><strong>责任角色</strong>：林亦舟（现场）、唐映秋（台账）、秦芮（数据质量）。</li>
 </ul>
 <h3>P-09　访谈主题偏离导致轮次损耗（S3）</h3>
 <ul>
-<li>- <strong>现象</strong>：6 轮访谈中有 2 轮（turn-8、turn-10）在问&quot;报销&quot;，被访者明确回答&quot;报销不在我这条业务线上&quot;，并两次要求澄清项目范围。</li>
-<li>- <strong>可核实数据</strong>：无效轮次 2/6 = 33.3%；被访者主动纠正主题 3 次（turn-8、turn-10、turn-12 开头）。</li>
-<li>- <strong>影响</strong>：本轮有效信息密度下降；若重复发生，会让被访者怀疑调查严谨性。</li>
-<li>- <strong>改进</strong>：访谈提纲先确认业务线，再问事件，最后才问频次；问数字前先确认对方手上有没有记录。</li>
+<li><strong>现象</strong>：6 轮访谈中有 2 轮（turn-8、turn-10）在问&quot;报销&quot;，被访者明确回答&quot;报销不在我这条业务线上&quot;，并两次要求澄清项目范围。</li>
+<li><strong>可核实数据</strong>：无效轮次 2/6 = 33.3%；被访者主动纠正主题 3 次（turn-8、turn-10、turn-12 开头）。</li>
+<li><strong>影响</strong>：本轮有效信息密度下降；若重复发生，会让被访者怀疑调查严谨性。</li>
+<li><strong>改进</strong>：访谈提纲先确认业务线，再问事件，最后才问频次；问数字前先确认对方手上有没有记录。</li>
 </ul>
 <hr>
 <h2>4. 目标、边界与验收（来自访谈的原话口径）</h2>
@@ -196,10 +199,10 @@ code{background:#f3f4f6;color:#8b2e2e;padding:1px 5px;border-radius:4px;font-siz
 <blockquote>这两条是绑定的。任何以&quot;提效&quot;为由删掉确认环节的方案，业务负责人明确不签。</blockquote>
 <h3>4.2 试点边界（f05，红线）</h3>
 <ul>
-<li>- 只覆盖<strong>一个批次</strong>的会议服务需求；</li>
-<li>- 不自动邀请真实嘉宾；</li>
-<li>- 不发布会议安排；</li>
-<li>- 不确认敏感个人需求。</li>
+<li>只覆盖<strong>一个批次</strong>的会议服务需求；</li>
+<li>不自动邀请真实嘉宾；</li>
+<li>不发布会议安排；</li>
+<li>不确认敏感个人需求。</li>
 </ul>
 <h3>4.3 验收硬标准（f02）</h3>
 <table><thead><tr><th>#</th><th>标准</th><th>判定现状</th></tr></thead><tbody>
@@ -242,11 +245,11 @@ code{background:#f3f4f6;color:#8b2e2e;padding:1px 5px;border-radius:4px;font-siz
 </tbody></table>
 <h3>5.3 采集方法（给记录持有人）</h3>
 <ol>
-<li>1. <strong>不重新造表</strong>：直接用现有交接台账与现场记录，避免二次录入本身成为新的工作量；</li>
-<li>2. <strong>双时间戳</strong>：每项需求同时记&quot;业务发生时间&quot;与&quot;系统/台账接收时间&quot;，回填时间不得当作发生时间；</li>
-<li>3. <strong>按项不按场</strong>：M2/M3/M6 以需求项为单位统计，避免批次口径掩盖单点问题；</li>
-<li>4. <strong>一次一批次</strong>：先取一个完整批次，不做跨批次合并，避免口径混杂；</li>
-<li>5. <strong>缺失即缺失</strong>：字段空缺记为空值，不猜测、不填补。</li>
+<li><strong>不重新造表</strong>：直接用现有交接台账与现场记录，避免二次录入本身成为新的工作量；</li>
+<li><strong>双时间戳</strong>：每项需求同时记&quot;业务发生时间&quot;与&quot;系统/台账接收时间&quot;，回填时间不得当作发生时间；</li>
+<li><strong>按项不按场</strong>：M2/M3/M6 以需求项为单位统计，避免批次口径掩盖单点问题；</li>
+<li><strong>一次一批次</strong>：先取一个完整批次，不做跨批次合并，避免口径混杂；</li>
+<li><strong>缺失即缺失</strong>：字段空缺记为空值，不猜测、不填补。</li>
 </ol>
 <hr>
 <h2>6. 访谈轨迹（六轮逐条）</h2>
@@ -272,12 +275,12 @@ code{background:#f3f4f6;color:#8b2e2e;padding:1px 5px;border-radius:4px;font-siz
 <hr>
 <h2>8. 结论</h2>
 <ol>
-<li>1. <strong>问题方向可以确认，量级不能确认</strong>。两大痛点（重复核对、变更后口径不一致）有业务负责人明确背书；但频次、耗时、涉及项数三项全缺，任何百分比都不可用。</li>
-<li>2. <strong>交接点是唯一被指认的高发位置</strong>，且业务负责人明确反对&quot;先上自动化&quot;。因此一期应做<strong>交接点的确认与留痕</strong>，不是做自动识别或自动生成。</li>
-<li>3. <strong>验收标准已经硬到可以卡人</strong>：50 项全具备责任人 + 确认状态 + 变更可追溯。但它缺三样执行细则：抽样方法、判定人、追溯颗粒度。</li>
-<li>4. <strong>决策链闭合一半</strong>：能定范围、能叫停、能确认用途；推广与预算两块空白。试点可启动，但不能承诺推广。</li>
-<li>5. <strong>本轮访谈覆盖度只有 1/6</strong>。六个角色只访了一个，结论只代表业务负责人视角；一线（林亦舟）与质量（傅景）的记录是下一步的硬前提。</li>
-<li>6. <strong>过程教训</strong>：问&quot;报销&quot;耗掉 1/3 轮次。后续访谈先确认业务线，再问事件，最后才问频次；要数字前先确认对方手上有记录。</li>
+<li><strong>问题方向可以确认，量级不能确认</strong>。两大痛点（重复核对、变更后口径不一致）有业务负责人明确背书；但频次、耗时、涉及项数三项全缺，任何百分比都不可用。</li>
+<li><strong>交接点是唯一被指认的高发位置</strong>，且业务负责人明确反对&quot;先上自动化&quot;。因此一期应做<strong>交接点的确认与留痕</strong>，不是做自动识别或自动生成。</li>
+<li><strong>验收标准已经硬到可以卡人</strong>：50 项全具备责任人 + 确认状态 + 变更可追溯。但它缺三样执行细则：抽样方法、判定人、追溯颗粒度。</li>
+<li><strong>决策链闭合一半</strong>：能定范围、能叫停、能确认用途；推广与预算两块空白。试点可启动，但不能承诺推广。</li>
+<li><strong>本轮访谈覆盖度只有 1/6</strong>。六个角色只访了一个，结论只代表业务负责人视角；一线（林亦舟）与质量（傅景）的记录是下一步的硬前提。</li>
+<li><strong>过程教训</strong>：问&quot;报销&quot;耗掉 1/3 轮次。后续访谈先确认业务线，再问事件，最后才问频次；要数字前先确认对方手上有记录。</li>
 </ol>
 <hr>
 <h2>附录 A　原话摘录（按轮次）</h2>
