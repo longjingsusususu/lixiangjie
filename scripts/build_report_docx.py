@@ -122,6 +122,22 @@ def add_table(doc, rows):
     return table
 
 
+CN_NUM = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5,
+          "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
+
+
+def cn2int(s):
+    """中文数字转整数，支持 一~九十九（够用于章节号）。"""
+    if s in CN_NUM:
+        return CN_NUM[s]
+    if "十" in s:
+        head, _, tail = s.partition("十")
+        tens = CN_NUM.get(head, 1) if head else 1
+        ones = CN_NUM.get(tail, 0) if tail else 0
+        return tens * 10 + ones
+    return s
+
+
 def parse_md(md):
     """极简解析：返回块列表 (kind, payload)。"""
     blocks, i = [], 0
@@ -268,6 +284,10 @@ def build(md_path, out_path, doc_kind="", subtitle=""):
     toc = []
     for kind_b, payload_b in body:
         if kind_b != "h2":
+            continue
+        m = re.match(r"^第([一二三四五六七八九十]+)章[　\s]*(.*)$", payload_b)
+        if m:                                          # 「第一章　标题」→ 1 / 标题
+            toc.append((str(cn2int(m.group(1))), m.group(2)))
             continue
         m = re.match(r"^([0-9]+)\.?\s*(.*)$", payload_b)
         if m:
