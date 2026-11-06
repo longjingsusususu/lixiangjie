@@ -126,12 +126,18 @@ def render(md: str) -> str:
     return "\n".join(out)
 
 
-def build(md_path, out_path):
+def build(md_path, out_path, subtitle=""):
     md = open(md_path, encoding="utf-8").read()
-    # 封面取首行标题，其余进正文
+    # 封面取首行标题（支持「主标题 · 文档类型」），其余进正文
     first, rest = md.split("\n", 1)
     title = first.lstrip("# ").strip()
+    head_title, _, kind = title.partition(" · ")
+    kind = kind or "需求报告"
     body = render(rest)
+    import re as _re
+    code = (_re.search(r"\|\s*(?:资料|报告)编号\s*\|\s*([^|]+)\|", md) or [None, "编号待补"])[1].strip()
+    ver = (_re.search(r"\|\s*版本[^|]*\|[^|]*?v([\d.]+)", md) or [None, "1.0"])[1].strip()
+    date = (_re.search(r"(20\d{2}-\d{2}-\d{2})", md) or [None, ""])[1].strip()
     doc = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -139,12 +145,12 @@ def build(md_path, out_path):
 <body><div class="wrap">
 <div class="cover">
   <div class="org">上海靖达国际商务会展旅行有限公司 · 合成训练资料</div>
-  <h1>会议活动服务需求汇总</h1>
-  <h1 style="font-size:26px;margin-top:0">需求报告</h1>
-  <div class="sub">单批次 50 项服务需求的登记、定版、交接与留痕</div>
+  <h1>{html.escape(head_title)}</h1>
+  <h1 style="font-size:26px;margin-top:0">{html.escape(kind)}</h1>
+  <div class="sub">{html.escape(subtitle)}</div>
   <div class="meta">
-    <span>报告编号 f24015105-RPT-01</span><span>版本 v1.0</span>
-    <span>2026-11-06</span><span>状态：待确认</span>
+    <span>{html.escape(code)}</span><span>版本 v{html.escape(ver)}</span>
+    <span>{html.escape(date)}</span><span>状态：待确认</span>
   </div>
 </div>
 <div class="card">{body}</div>
@@ -154,4 +160,4 @@ def build(md_path, out_path):
 
 
 if __name__ == "__main__":
-    build(sys.argv[1], sys.argv[2])
+    build(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "")

@@ -159,9 +159,22 @@ def parse_md(md):
     return blocks
 
 
-def build(md_path, out_path):
+def build(md_path, out_path, doc_kind="", subtitle=""):
     md = open(md_path, encoding="utf-8").read()
     blocks = parse_md(md)
+    # 封面标题从 Markdown 首行取，支持「主标题 · 文档类型」写法
+    title = md.split("\n", 1)[0].lstrip("# ").strip()
+    head_title, _, tail = title.partition(" · ")
+    kind = tail or doc_kind or "报 告"
+    kind_spaced = " ".join(kind) if len(kind) <= 5 else kind
+    # 封面元信息优先从正文「文档控制」表提取，取不到再用默认值
+    def pick(pattern, default):
+        m = re.search(pattern, md)
+        return m.group(1).strip() if m else default
+    doc_code = pick(r"\|\s*(?:资料|报告)编号\s*\|\s*([^|]+)\|", "f24015105-DOC-01")
+    doc_ver = pick(r"\|\s*版本[^|]*\|[^|]*?v([\d.]+)", "1.0")
+    doc_date = pick(r"(20\d{2}-\d{2}-\d{2})", "2026-11-06")
+    doc_label = "资料编号" if "资料编号" in md else "报告编号"
 
     doc = Document()
     sec = doc.sections[0]
@@ -187,24 +200,24 @@ def build(md_path, out_path):
 
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(6)
-    r = p.add_run("会议活动服务需求汇总")
+    r = p.add_run(head_title)
     set_font(r, 30, True, NAVY, east="微软雅黑")
 
     p = doc.add_paragraph()
-    r = p.add_run("需 求 报 告")
+    r = p.add_run(kind_spaced)
     set_font(r, 26, True, NAVY, east="微软雅黑")
 
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(10)
-    r = p.add_run("Requirements Report · 单批次 50 项服务需求的登记、定版、交接与留痕")
+    r = p.add_run(subtitle)
     set_font(r, 10.5, False, GRAY, east="微软雅黑")
 
     doc.add_paragraph().paragraph_format.space_before = Pt(40)
 
     meta = [
-        ["报告编号", "f24015105-RPT-01", "版本", "v1.0"],
-        ["编制日期", "2026-11-06", "文档性质", "合成演练资料"],
-        ["确认状态", "待确认（六项开放口径未书面确认）", "适用范围", "一期试点"],
+        [doc_label, doc_code, "版本", f"v{doc_ver}"],
+        ["编制日期", doc_date, "文档性质", "合成演练资料"],
+        ["确认状态", "待确认（开放口径未书面确认）", "适用范围", "一期试点"],
     ]
     t = doc.add_table(rows=0, cols=4)
     t.style = "Table Grid"
@@ -251,22 +264,16 @@ def build(md_path, out_path):
     set_font(r, 18, True, NAVY, east="微软雅黑")
     p.paragraph_format.space_after = Pt(10)
 
-    toc = [
-        ("0", "摘要：五条判断、关键数字、六件待定事项"),
-        ("1", "报告说明与资料基础：四份资料、承接关系、证据纪律"),
-        ("2", "业务背景与问题定义：触发事件 E-01、问题陈述、目标与非目标"),
-        ("3", "现状流程与量化基线：11 步流程、30.8→15.8 人时、五个断点"),
-        ("4", "需求全景：REQ-1~6 与 FR-01~12 映射"),
-        ("5", "角色与诉求矩阵：六角色关注点、权利边界"),
-        ("6", "功能需求详述：状态机与 9 个一期功能模块"),
-        ("7", "非功能需求：性能、安全、合规、可用性、回滚"),
-        ("8", "范围边界：N1–N7 不做清单、永久红线、二期"),
-        ("9", "验收标准与指标：M1–M8、验收四条件、S1–S5 停止判据"),
-        ("10", "风险、假设与开放问题：R1–R7、十项待核实口径"),
-        ("11", "实施与试点计划：四阶段、第一周 D1–D5、运行方式"),
-        ("12", "结论与建议"),
-        ("附", "附录 A 编号索引 / B 资料索取 / C 术语 / D 引用出处"),
-    ]
+    # 目录由正文一级标题自动生成（章节号 + 标题）
+    toc = []
+    for kind_b, payload_b in body:
+        if kind_b != "h2":
+            continue
+        m = re.match(r"^([0-9]+)\.?\s*(.*)$", payload_b)
+        if m:
+            toc.append((m.group(1), m.group(2)))
+        else:
+            toc.append(("附", payload_b.replace("附录 ", "")))
     t = doc.add_table(rows=0, cols=2)
     t.style = "Table Grid"
     cell_margins(t, 40, 40, 90, 90)
@@ -375,7 +382,7 @@ def build(md_path, out_path):
     footer = sec.footer
     fp = footer.paragraphs[0]
     fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = fp.add_run("会议活动服务需求报告 v1.0　·　第 ")
+    r = fp.add_run(f"{title}　·　第 ")
     set_font(r, 9, False, GRAY)
     add_field(fp, "PAGE")
     r = fp.add_run(" 页 / 共 ")
@@ -389,4 +396,6 @@ def build(md_path, out_path):
 
 
 if __name__ == "__main__":
-    build(sys.argv[1], sys.argv[2])
+    build(sys.argv[1], sys.argv[2],
+          sys.argv[3] if len(sys.argv) > 3 else "",
+          sys.argv[4] if len(sys.argv) > 4 else "")
