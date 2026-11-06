@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}概览{% endblock %}
+{% block body %}
+<header class="page-head">
+  <div>
+    <h1>概览</h1>
+    <p>今天是 {{ today }}　·　只统计数据，不做推断</p>
+  </div>
+  <a class="btn" href="/">打开员工查询台</a>
+</header>
+
+<section class="cards">
+  {% for name, val, note in cards %}
+  <div class="card">
+    <div class="card-name">{{ name }}</div>
+    <div class="card-val">{{ val }}</div>
+    <div class="card-note">{{ note }}</div>
+  </div>
+  {% endfor %}
+  <div class="card">
+    <div class="card-name">疑似越界</div>
+    <div class="card-val">{{ flagged }}</div>
+    <div class="card-note">审计页标记数（可撤销）</div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>近 7 天查询量</h2>
+    <span class="hint">来源：messages（role=user）</span>
+  </div>
+  {% if trend %}
+  <div class="bars">
+    {% for t in trend %}
+    <div class="bar-col">
+      <div class="bar-num">{{ t.c }}</div>
+      <div class="bar" style="height: {{ t.h }}%"></div>
+      <div class="bar-x">{{ t.d }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">还没有查询记录。打开员工查询台提一个问题，这里就会有数。</div>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <div class="panel-head"><h2>当前进度</h2></div>
+  <table class="tbl">
+    <thead><tr><th>批次</th><th>内容</th><th>状态</th></tr></thead>
+    <tbody>
+      <tr><td>批 1</td><td>登录鉴权、概览、用户与角色</td><td><span class="tag ok">已上线</span></td></tr>
+      <tr><td>批 2</td><td>需求项库、批量导入、编号映射</td><td><span class="tag wait">待开发</span></td></tr>
+      <tr><td>批 3</td><td>规则配置（同义词/类别/卡口）即时生效</td><td><span class="tag wait">待开发</span></td></tr>
+      <tr><td>批 4</td><td>查询审计、疑似越界标记、导出</td><td><span class="tag wait">待开发</span></td></tr>
+    </tbody>
+  </table>
+</section>
+{% endblock %}

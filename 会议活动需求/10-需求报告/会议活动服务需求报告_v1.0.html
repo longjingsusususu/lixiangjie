@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>会议活动服务需求汇总 · 需求报告</title><style>
+:root{--navy:#1f3a5f;--ink:#20262e;--gray:#5b6676;--line:#dfe5ee;--bg:#f4f6f9;--card:#fff;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+     font:15px/1.85 "Microsoft YaHei","PingFang SC",sans-serif}
+.wrap{max-width:940px;margin:0 auto;padding:28px 22px 60px}
+.cover{background:var(--navy);color:#fff;border-radius:14px;padding:38px 34px;margin-bottom:26px}
+.cover .org{font-size:14px;opacity:.78;letter-spacing:1px}
+.cover h1{font-size:32px;margin:14px 0 2px;font-weight:700;letter-spacing:1px}
+.cover .sub{font-size:15px;opacity:.85;margin-top:8px}
+.cover .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 26px;font-size:13px;opacity:.85}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px 28px;margin:16px 0}
+h2{font-size:21px;color:var(--navy);margin:34px 0 12px;padding-bottom:8px;
+   border-bottom:2px solid var(--navy)}
+h3{font-size:16px;color:#1b4f8a;margin:22px 0 8px}
+h4{font-size:14px;color:var(--navy);margin:16px 0 6px}
+p{margin:8px 0;text-align:justify}
+ul,ol{margin:8px 0 8px 22px;padding:0}
+li{margin:4px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:13px;
+      table-layout:fixed;word-break:break-word}
+th,td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;line-height:1.65}
+th{background:#e8eef6;color:var(--navy);font-weight:700;text-align:left}
+tbody tr:nth-child(even){background:#f7f9fc}
+pre{background:#f4f7fb;border:1px solid #dbe3ee;border-radius:4px;padding:12px 14px;
+  font-family:"Cascadia Mono",Consolas,"Courier New",monospace;font-size:11.5px;
+  line-height:1.5;white-space:pre;overflow-x:auto;margin:12px 0 16px}
+blockquote{margin:12px 0;padding:10px 16px;border-left:4px solid #9db2cc;
+           background:#f1f5fa;color:var(--gray);font-size:13.5px;border-radius:0 8px 8px 0}
+hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+code{background:#f3f4f6;color:#8b2e2e;padding:1px 5px;border-radius:4px;font-size:13px}
+.tag{display:inline-block;background:#e8eef6;color:var(--navy);border-radius:999px;
+     padding:1px 9px;font-size:12px;margin-right:6px}
+@media print{
+  body{background:#fff} .wrap{max-width:none;padding:0}
+  .card{border:0;padding:0;margin:0} .cover{border-radius:0}
+  h2{page-break-after:avoid} table{page-break-inside:auto} tr{page-break-inside:avoid}
+}
+</style></head>
+<body><div class="wrap">
+<div class="cover">
+  <div class="org">上海靖达国际商务会展旅行有限公司 · 合成训练资料</div>
+  <h1>会议活动服务需求汇总</h1>
+  <h1 style="font-size:26px;margin-top:0">需求报告</h1>
+  <div class="sub">单批次 50 项服务需求的登记、定版、交接与留痕</div>
+  <div class="meta">
+    <span>编号待补</span><span>版本 v1.0</span>
+    <span></span><span>状态：待确认</span>
+  </div>
+</div>
+<div class="card"><table><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody>
+<tr><td>报告名称</td><td>会议活动服务需求汇总 · 需求报告</td></tr>
+<tr><td>覆盖范围</td><td>单批次会议活动服务需求（50 项）的登记、定版、交接、异常闭环与留痕</td></tr>
+<tr><td>资料基础</td><td>四份可核对资料（dlg-travel-conference-01~04）+ 既有 8 份交付物</td></tr>
+<tr><td>编制依据</td><td>业务挖掘成果 v3（REQ-1~6 / M1–M8 / N1–N7 / S1–S5）、需求分析与技术选型 v1.0、技术架构选型 v1.0、阶段 1 原型与 MVP</td></tr>
+<tr><td>确认状态</td><td><strong>待确认</strong>：六项开放口径未经客户书面确认，不得作为承诺依据</td></tr>
+<tr><td>数据声明</td><td>文中所有工时、比例、金额标注为&quot;虚构样本/演练假设&quot;者，均<strong>不得</strong>当作企业真实经营数据引用</td></tr>
+</tbody></table>
+<blockquote>阅读提示：本报告的核心结论是&quot;这个项目一期是一套<strong>关卡与留痕系统</strong>，不是一个 AI 项目&quot;。所有 AI 相关内容均列为二期，且不改变一期验收口径。</blockquote>
+<hr>
+<h2>0. 摘要</h2>
+<h3>0.1 五条判断</h3>
+<table><thead><tr><th>#</th><th>判断</th><th>依据</th></tr></thead><tbody>
+<tr><td>1</td><td>一期<strong>不含任何 AI 生成能力</strong>。它解决的是&quot;登记分散、版本靠猜、交接只发已处理&quot;的流程失控问题</td><td>f01（业务负责人明确&quot;先观察每个交接点，而不是直接增加自动化&quot;）</td></tr>
+<tr><td>2</td><td>系统的核心价值不是&quot;存数据&quot;，而是<strong>&quot;在对外承诺之前拦住错误&quot;</strong>。三个拦截点：交接三要素卡口、异常人工队列、版本定版</td><td>E-01（f11 双语主持事件在交接环节失败）、f44</td></tr>
+<tr><td>3</td><td>最大工程风险不是开发，是<strong>数据对不上</strong>。三套工具无统一编号，跨工具只能靠字段匹配</td><td>f30（&quot;稳定性有限，是我最担心的点&quot;）</td></tr>
+<tr><td>4</td><td>32 人时预算（4 周 × 2 人 × 每周 ≤4 小时）决定一期必须薄：可自动采集的指标优先，超预算即触发暂停</td><td>f03、S4</td></tr>
+<tr><td>5</td><td><strong>双时间戳</strong>与<strong>&quot;缺失 ≠ 未确认&quot;分列</strong>是表结构级决策，第一天就要进 schema，后补需迁移历史数据</td><td>f13、f31、f34</td></tr>
+</tbody></table>
+<h3>0.2 关键数字</h3>
+<table><thead><tr><th>指标</th><th>数值</th><th>性质</th></tr></thead><tbody>
+<tr><td>验收口径</td><td>50 个服务项全部具备责任人 + 确认状态 + 变更可追溯</td><td>硬性（f02/f42）</td></tr>
+<tr><td>唯一可预写指标</td><td>M6 确认完整率 = <strong>100%</strong></td><td>硬性</td></tr>
+<tr><td>试点预算</td><td>32 人时（4 周、2 人、每周 ≤4 小时）</td><td>硬性约束（f03）</td></tr>
+<tr><td>现状单场工时</td><td>30.8 人时</td><td><strong>虚构样本</strong>，待实测</td></tr>
+<tr><td>目标单场工时</td><td>15.8 人时（降幅 48.7%）</td><td><strong>演练假设</strong>，不作为承诺</td></tr>
+<tr><td>单场需求项</td><td>70 项（试点批次取 50 项）</td><td><strong>虚构样本</strong>（f12）</td></tr>
+<tr><td>交付报价</td><td>¥65,000（四阶段，30% / 40% / 30%）</td><td>报价口径，非成本核算</td></tr>
+</tbody></table>
+<h3>0.3 需要客户拍板的六件事</h3>
+<table><thead><tr><th>#</th><th>待定项</th><th>阻塞什么</th><th>待谁确认</th></tr></thead><tbody>
+<tr><td>1</td><td>交接责任转移时点（发出即转移 / 接收确认后转移）</td><td>卡口字段定稿</td><td>顾明岚 + 林亦舟</td></tr>
+<tr><td>2</td><td>版本规则维护人与复核周期</td><td>定版功能上线</td><td>顾明岚 + 傅景</td></tr>
+<tr><td>3</td><td>异常队列值守人、响应时限、暂停恢复条件</td><td>队列有效性</td><td>傅景提、顾明岚批</td></tr>
+<tr><td>4</td><td>三套工具只读接口能否开放</td><td>数据入口路由（开不了走 CSV）</td><td>秦芮</td></tr>
+<tr><td>5</td><td>50 项全量还是分批、单区还是跨区</td><td>M6 分母与编号映射范围</td><td>顾明岚</td></tr>
+<tr><td>6</td><td>敏感字段脱敏粒度与留存期限</td><td>合规上线</td><td>秦芮 + 傅景</td></tr>
+</tbody></table>
+<hr>
+<h2>1. 报告说明与资料基础</h2>
+<h3>1.1 本次纳入的四份可核对资料</h3>
+<table><thead><tr><th>编号</th><th>资料名称</th><th>提供的确定性信息</th><th>仍不确定的部分</th></tr></thead><tbody>
+<tr><td>dlg-travel-conference-01</td><td>客户简报</td><td>客户全称、行业、业务现场、项目目标与范围、需建立的基线、调查样本、六个待核实角色</td><td>真实事件、真实接口授权、真实预算与验收</td></tr>
+<tr><td>dlg-travel-conference-02</td><td>现状信息请求表</td><td>六角色各自应提供的记录类型、索取口径（最近一次处理记录/输入输出/交接对象/异常/适用规则）、每份资料需补记的六项元信息</td><td>持有人、版本、权限尚未访谈确认</td></tr>
+<tr><td>dlg-travel-conference-03</td><td>业务发现访谈问题库</td><td>六角色 × 6~7 问的访谈提纲，每角色一个核对重点</td><td>答案全部待采集</td></tr>
+<tr><td>dlg-travel-conference-04</td><td>利益相关者资料与分工</td><td>六角色自我介绍、核对重点、协作要求（不得替其他角色确认权限或业务事实）</td><td>审批权、预算权、最终验收权</td></tr>
+</tbody></table>
+<h3>1.2 与既有交付物的承接关系</h3>
+<table><thead><tr><th>既有交付物</th><th>在本报告中的作用</th><th>报告中的落点</th></tr></thead><tbody>
+<tr><td>业务挖掘成果 v3</td><td>事件卡 E-01、REQ-1~6、指标 M1–M8、不做清单 N1–N7、停止判据 S1–S5</td><td>第 2、4、9 章</td></tr>
+<tr><td>一页纸需求清单</td><td>目标、一期范围、角色权限、六个开放问题</td><td>第 5、6、10 章</td></tr>
+<tr><td>需求分析与技术选型</td><td>十个架构分叉与推荐基线、ADR、三案对比</td><td>第 6、7 章</td></tr>
+<tr><td>技术架构选型</td><td>四层架构、9 张表、第一周骨架</td><td>第 6、11 章</td></tr>
+<tr><td>阶段 1 原型 / 员工端与后台 / Agent 工具与编排</td><td>可运行证据：检索、缺项清单、交接卡口、票据机制</td><td>第 6.4、6.5、11 章</td></tr>
+<tr><td>报价单与三案设计方案</td><td>交付边界与阶段划分</td><td>第 11 章</td></tr>
+<tr><td>上线检查清单（5×5）</td><td>上线前置条件（含 8 项 P0）</td><td>第 7、10 章</td></tr>
+</tbody></table>
+<h3>1.3 证据纪律</h3>
+<ul>
+<li>本报告将信息分为三级：<strong>A 级（资料原文可核对）</strong>、<strong>B 级（访谈陈述，待交叉核实）</strong>、<strong>C 级（虚构样本/演练假设）</strong>；</li>
+<li>凡 C 级数据，正文均显式标注，不进入任何目标值或收益承诺；</li>
+<li>不预设根因：客户提出的是&quot;减少重复核对、提高可追溯性&quot;，本报告不将其解释为&quot;需要自动化&quot;；</li>
+<li>六人访谈完整率<strong>不等于</strong>需求确认；四来源（Brief / Industry / 访谈 / 现场记录）未收敛前，不得过阶段门。</li>
+</ul>
+<hr>
+<h2>2. 业务背景与问题定义</h2>
+<h3>2.1 客户与业务现场</h3>
+<table><thead><tr><th>要素</th><th>内容</th></tr></thead><tbody>
+<tr><td>客户</td><td>上海靖达国际商务会展旅行有限公司</td></tr>
+<tr><td>行业</td><td>会展旅行（会议活动服务）</td></tr>
+<tr><td>业务现场</td><td>靖达会展旅行 · 会议活动服务需求汇总演练区</td></tr>
+<tr><td>单批次规模</td><td>一场会议活动、约 70 项服务需求（试点批次取 50 项）</td></tr>
+<tr><td>需求类别</td><td>场地、餐饮、设备、语言服务、其他</td></tr>
+<tr><td>参与角色</td><td>业务负责人、一线服务专员、项目流程协调员、数字化工程师、审核与质量负责人、客户协同代表</td></tr>
+</tbody></table>
+<h3>2.2 触发事件 E-01（双语主持）</h3>
+<blockquote>主持人临时改用双语，翻译间与设备清单仍保持原方案；交接时无人能判定&quot;哪一版是有效版本&quot;，跨境执行团队按旧版准备，现场临时补救。</blockquote>
+<p>这一事件的价值不在于损失金额（仅有虚构样本），而在于它同时暴露了四个结构性问题：</p>
+<ol>
+<li><strong>版本无权威</strong>：文件名里带 <code>v3_最终_改</code>，无法判断哪一版被确认；</li>
+<li><strong>交接无卡口</strong>：交接只需&quot;发过去&quot;，接收方不必确认要素齐备；</li>
+<li><strong>责任无口径</strong>：出问题后无法回答&quot;责任何时从谁转移到谁&quot;；</li>
+<li><strong>异常无出口</strong>：冲突（双语 vs 单语设备清单）没有强制人工复核的队列。</li>
+</ol>
+<h3>2.3 问题陈述</h3>
+<table><thead><tr><th>维度</th><th>现状</th><th>影响</th><th>目标</th></tr></thead><tbody>
+<tr><td>登记</td><td>需求分散在服务台、台账、文件库与群消息四处，同一项重复登记</td><td>重复核对、口径不一</td><td>单一批次内每项需求唯一编号、唯一责任人</td></tr>
+<tr><td>版本</td><td>靠文件名猜版本，定版动作无留痕</td><td>执行按旧版、返工</td><td>系统生成版本号，定版留操作人与时间</td></tr>
+<tr><td>交接</td><td>&quot;发过去即完成&quot;，三要素（内容/责任人/时间窗）常缺</td><td>责任不清、现场补救</td><td>交接强制三要素校验，缺一不放行</td></tr>
+<tr><td>异常</td><td>缺项/冲突/脏数据无人认领，默认&quot;先按老办法&quot;</td><td>错误外溢到客户侧</td><td>全部进人工队列，闭环留痕，不得默认通过</td></tr>
+<tr><td>指标</td><td>处理时长、返工次数、复核成本无基线</td><td>无法证明改善</td><td>50 项确认完整率 100%，其余指标试点首周实测</td></tr>
+</tbody></table>
+<h3>2.4 目标与非目标</h3>
+<p><strong>目标（一期）</strong>：把&quot;登记分散、版本靠猜、交接只发已处理&quot;改造为&quot;每项有责任人、有确认状态、有版本、有来源&quot;，验收口径为 50 个服务项全部具备责任人与确认状态且变更可追溯（f02/f42）。</p>
+<p><strong>非目标（一期不做）</strong>：不做需求自动识别与生成、不做自动审批/放行/定责、不自动确认敏感个人需求、不代业务对外承诺、不写回任何系统、不开放外部接口、不清洗脏数据、不做收益承诺（N1–N7）。</p>
+<hr>
+<h2>3. 现状流程与量化基线</h2>
+<h3>3.1 现状 11 步流程</h3>
+<table><thead><tr><th>#</th><th>步骤</th><th>主责角色</th><th>载体</th><th>产物</th><th>失效点 / 证据</th></tr></thead><tbody>
+<tr><td>1</td><td>客户需求进线</td><td>叶书（客户协同）</td><td>邮件、群、会议</td><td>原始需求文本</td><td>口头确认无记录（f13）</td></tr>
+<tr><td>2</td><td>需求初判与拆分</td><td>唐映秋（流程协调）</td><td>个人表格</td><td>需求清单草稿</td><td>拆分口径因人而异（f50）</td></tr>
+<tr><td>3</td><td>分派到类别责任人</td><td>唐映秋</td><td>群消息</td><td>分派记录</td><td>分派无回执（f23）</td></tr>
+<tr><td>4</td><td>各类别分别登记</td><td>林亦舟（一线）等</td><td>服务台 / 台账 / 文件库</td><td>三份分散记录</td><td>无统一编号，跨工具靠字段匹配（f30）</td></tr>
+<tr><td>5</td><td>报价与成本核算</td><td>顾明岚（业务负责人）</td><td>报价表</td><td>报价单</td><td>清单变更后报价未同步（f25）</td></tr>
+<tr><td>6</td><td>内部方案评审</td><td>顾明岚 / 傅景（质量）</td><td>会议</td><td>评审结论</td><td>结论不进系统（f24）</td></tr>
+<tr><td>7</td><td>客户确认</td><td>叶书</td><td>邮件、口头</td><td>确认意见</td><td>&quot;确认&quot;无签字口径（f23）</td></tr>
+<tr><td>8</td><td>变更发生</td><td>客户</td><td>电话、群</td><td>变更诉求</td><td>变更未登记即执行（f11）</td></tr>
+<tr><td>9</td><td>变更回传与清单更新</td><td>唐映秋</td><td>手工改表</td><td>新版本文件</td><td><strong>最易漏</strong>：只改自己那份（f24）</td></tr>
+<tr><td>10</td><td>现场交接执行</td><td>林亦舟</td><td>群、U 盘、打印件</td><td>执行清单</td><td>只发已处理项，缺项不显性（f20）</td></tr>
+<tr><td>11</td><td>复盘与结算</td><td>傅景 / 顾明岚</td><td>事后文档</td><td>复盘记录</td><td>无法回溯当时版本（f42）</td></tr>
+</tbody></table>
+<h3>3.2 量化对照（虚构样本，待实测）</h3>
+<table><thead><tr><th>#</th><th>步骤</th><th>现状（人时/场）</th><th>引入系统后（人时/场）</th><th>差异来源</th></tr></thead><tbody>
+<tr><td>1</td><td>需求进线</td><td>1.5</td><td>1.5</td><td>无变化，仍需人读</td></tr>
+<tr><td>2</td><td>初判与拆分</td><td>2.0</td><td>1.0</td><td>模板化拆分 + 类别同义词</td></tr>
+<tr><td>3</td><td>分派</td><td>1.0</td><td>0.5</td><td>系统分派 + 回执</td></tr>
+<tr><td>4</td><td>分类登记</td><td>5.5</td><td>3.0</td><td>三源只读聚合，减少重复录入</td></tr>
+<tr><td>5</td><td>报价核算</td><td>4.0</td><td>4.0</td><td>人工决策，不自动化</td></tr>
+<tr><td>6</td><td>内部评审</td><td>3.0</td><td>2.0</td><td>版本唯一，减少对版本</td></tr>
+<tr><td>7</td><td>客户确认</td><td>2.5</td><td>2.0</td><td>确认状态显性</td></tr>
+<tr><td>8</td><td>变更登记</td><td>1.5</td><td>0.5</td><td>变更入口固定</td></tr>
+<tr><td>9</td><td>回传与更新</td><td>4.8</td><td>0.3</td><td><strong>最大改善点</strong>：单点更新，全员同版本</td></tr>
+<tr><td>10</td><td>现场交接</td><td>3.5</td><td>1.0</td><td>缺项清单直接可查</td></tr>
+<tr><td>11</td><td>复盘结算</td><td>1.5</td><td>0</td><td>留痕自动可回溯</td></tr>
+<tr><td>—</td><td><strong>合计</strong></td><td><strong>30.8</strong></td><td><strong>15.8</strong></td><td>降幅 48.7%</td></tr>
+</tbody></table>
+<blockquote>上表为<strong>演练假设</strong>：样本为虚构的每场 70 项、遗漏回查约 4 小时（f12）。真实基线必须在试点首周按本项目样本实测，不得以本表作为收益承诺或报价依据。</blockquote>
+<h3>3.3 五个结构断点（对应到需求）</h3>
+<table><thead><tr><th>断点</th><th>表现</th><th>对应需求</th></tr></thead><tbody>
+<tr><td>断点 1：登记分散</td><td>一处变更，三处不同步</td><td>REQ-4、REQ-6</td></tr>
+<tr><td>断点 2：版本靠猜</td><td>无法判定有效版本</td><td>REQ-2</td></tr>
+<tr><td>断点 3：交接无卡口</td><td>缺项不显性，责任不转移</td><td>REQ-1</td></tr>
+<tr><td>断点 4：异常无队列</td><td>冲突被&quot;先按老办法&quot;消化</td><td>REQ-3</td></tr>
+<tr><td>断点 5：跨团队口径不一</td><td>主办方与执行团队对&quot;完成&quot;定义不同</td><td>REQ-5</td></tr>
+</tbody></table>
+<hr>
+<h2>4. 需求全景</h2>
+<h3>4.1 六条业务需求（REQ-1~REQ-6）</h3>
+<table><thead><tr><th>编号</th><th>需求</th><th>负责人</th><th>验收方式</th><th>人工确认点</th><th>依据</th></tr></thead><tbody>
+<tr><td>REQ-1</td><td>交接责任转移时点须以&quot;接收方确认三项要素&quot;为口径</td><td>唐映秋 + 顾明岚</td><td>3 个虚构交接样本桌面推演，按&quot;发出即转移&quot;与&quot;接收确认后转移&quot;两种口径各出一版责任清单，请顾明岚、林亦舟各判一次</td><td>顾明岚签字</td><td>f20、f23、f25</td></tr>
+<tr><td>REQ-2</td><td>有效版本判定规则须明确维护人与复核周期</td><td>傅景 + 顾明岚</td><td>傅景出具规则变更的审批与复核建议，顾明岚确认；以&quot;规则变更后责任清单同步更新&quot;作为附加检查项</td><td>傅景质量签字</td><td>f24、f34、f04</td></tr>
+<tr><td>REQ-3</td><td>异常需求人工复核卡点须定义值守人、响应时限、暂停恢复条件</td><td>傅景牵头、顾明岚批准</td><td>用模拟异常（主持人临时改双语，f11）走完整个人工队列，记录从发现到复核完成的步骤与耗时</td><td>傅景判定闭环</td><td>f44、f42、f40</td></tr>
+<tr><td>REQ-4</td><td>一线需要&quot;缺项清单 + 来源位置&quot;，而非泛化摘要</td><td>林亦舟提出、秦芮评估</td><td>用脱敏只读导出生成缺项清单原型，字段限于编号/类别/责任人/时间窗/确认状态；林亦舟在 70 项模拟样本试用并记录误报漏报</td><td>林亦舟确认可用 + 秦芮确认字段可追溯</td><td>f15、f13、f14、f31</td></tr>
+<tr><td>REQ-5</td><td>跨团队口径以原始记录为准，先对齐主办方与执行团队目标</td><td>叶书召集、唐映秋提供记录</td><td>双方各出 1 名代表做一次口径对齐会，用同一批虚构需求核对数量与状态</td><td>双方代表书面确认</td><td>f50、f53、f51、f55</td></tr>
+<tr><td>REQ-6</td><td>只读集成下的数据质量与故障兜底须明确复核责任与快照期限</td><td>秦芮 + 傅景</td><td>演练环境构造重复编号、空时间、版本断链各 1 例，走标记—挂接—人工复核流程</td><td>傅景确认脏数据处理留痕合规</td><td>f32、f33、f35、f30</td></tr>
+</tbody></table>
+<h3>4.2 需求到功能的映射</h3>
+<table><thead><tr><th>功能编号</th><th>功能</th><th>承接 REQ</th><th>一期/二期</th></tr></thead><tbody>
+<tr><td>FR-01</td><td>需求登记与双轨补录</td><td>REQ-4</td><td>一期</td></tr>
+<tr><td>FR-02</td><td>三源只读接入与编号映射</td><td>REQ-6</td><td>一期（可降级 CSV）</td></tr>
+<tr><td>FR-03</td><td>版本生成与定版</td><td>REQ-2</td><td>一期</td></tr>
+<tr><td>FR-04</td><td>交接三要素卡口</td><td>REQ-1</td><td>一期</td></tr>
+<tr><td>FR-05</td><td>异常人工队列与复核卡</td><td>REQ-3</td><td>一期</td></tr>
+<tr><td>FR-06</td><td>统计看板与指标导出</td><td>全部（度量）</td><td>一期</td></tr>
+<tr><td>FR-07</td><td>登录鉴权与五角色权限</td><td>REQ-1/2/3</td><td>一期</td></tr>
+<tr><td>FR-08</td><td>审计留痕与变更追溯</td><td>REQ-2/6</td><td>一期</td></tr>
+<tr><td>FR-09</td><td>跨团队口径对照视图</td><td>REQ-5</td><td>一期（只读对照）</td></tr>
+<tr><td>FR-10</td><td>LLM 需求抽取向导</td><td>REQ-4 增强</td><td><strong>二期</strong></td></tr>
+<tr><td>FR-11</td><td>制度/规则问答</td><td>REQ-2 增强</td><td><strong>二期</strong></td></tr>
+<tr><td>FR-12</td><td>附件挂单</td><td>—</td><td><strong>二期</strong></td></tr>
+</tbody></table>
+<hr>
+<h2>5. 角色与诉求矩阵</h2>
+<table><thead><tr><th>角色</th><th>关注点（自述）</th><th>需要提供的记录</th><th>关键权利</th><th>不得代劳</th></tr></thead><tbody>
+<tr><td>顾明岚 · 业务负责人</td><td>业务价值、决策与试点范围</td><td>业务目标与试点决策记录</td><td>确认签字、批准暂停、调整范围</td><td>不能替一线确认操作细节</td></tr>
+<tr><td>林亦舟 · 一线服务专员</td><td>具体经历、现场习惯、复核方式</td><td>现场操作与异常处理记录</td><td>提出变更、验收缺项清单可用性</td><td>不能替业务负责人确认范围</td></tr>
+<tr><td>唐映秋 · 项目流程协调员</td><td>流程、材料、交接与责任</td><td>流程交接与资料责任记录</td><td>定版、发起交接、维护未结项</td><td>不能替质量确认合规</td></tr>
+<tr><td>秦芮 · 数字化工程师</td><td>系统、数据、更新与故障</td><td>系统数据与集成条件记录</td><td>字段配置、导入、脱敏规则、快照期限建议</td><td>不能替业务确认口径</td></tr>
+<tr><td>傅景 · 审核与质量负责人</td><td>风险、权限、留存与审计</td><td>风险控制与审核边界记录</td><td>质量签字、异常闭环判定、<strong>暂停权</strong></td><td>不能替业务批准范围</td></tr>
+<tr><td>叶书 · 客户协同代表</td><td>下游口径、投诉与反馈</td><td>客户体验与协作反馈记录</td><td>召集口径对齐会、确认结果用途</td><td>不能替执行团队确认状态</td></tr>
+</tbody></table>
+<p><strong>权限设计原则</strong>：编辑权限与确认权限分离；系统与模型无任何审批权（f22 红线）；角色每次请求回库校验，改角色即时生效。</p>
+<hr>
+<h2>6. 功能需求详述（一期）</h2>
+<h3>6.1 需求项状态机（所有功能共用）</h3>
+<table><thead><tr><th>状态</th><th>含义</th><th>允许迁移到</th><th>触发人</th></tr></thead><tbody>
+<tr><td>缺失</td><td>字段残缺，连&quot;未确认&quot;都不成立</td><td>未确认</td><td>一线补录</td></tr>
+<tr><td>未确认</td><td>内容有了，缺责任人/来源/客户确认</td><td>已确认</td><td>业务负责人</td></tr>
+<tr><td>已确认</td><td>三要素齐备并有确认签字</td><td>已定版</td><td>协调员（需版本校验）</td></tr>
+<tr><td>已定版</td><td>版本号锁定，可发起交接</td><td>已交接</td><td>协调员（需三要素）</td></tr>
+<tr><td>已交接</td><td>责任已按口径转移给接收方</td><td>—（只可追加变更记录）</td><td>接收方确认</td></tr>
+</tbody></table>
+<blockquote>规则：<strong>缺失与未确认必须分列统计</strong>，混列则 M6 与全部派生指标失真（f31）；任何状态不得由系统自动推进到&quot;已确认&quot;及之后。</blockquote>
+<h3>6.2 FR-01 需求登记与双轨补录</h3>
+<ul>
+<li><strong>输入</strong>：手动表单、md/CSV 批量导入、群消息补录（来源记录字段必填）；</li>
+<li><strong>必填字段</strong>：编号、类别、内容、责任人、业务发生时间、系统接收时间、来源工具、来源位置、状态；</li>
+<li><strong>规则</strong>：双时间戳分别存储，系统接收时间由服务端生成不可编辑（f13/f34）；同一编号重复导入时进入冲突队列而非覆盖（f33）；脏数据保留原行并标记，不清洗（N6）；</li>
+<li><strong>输出</strong>：需求项记录 + 导入报告（成功/跳过/冲突逐行说明，含行号）；</li>
+<li><strong>异常</strong>：编号非法、字段缺失、时间倒挂均逐行报错，不静默丢弃；</li>
+<li><strong>验收</strong>：50 项全部有责任人、确认状态、来源位置；重复导入不产生重复项。</li>
+</ul>
+<h3>6.3 FR-02 三源只读接入与编号映射</h3>
+<ul>
+<li><strong>输入</strong>：服务台、台账、文件库的只读导出（接口优先，CSV 兜底）；</li>
+<li><strong>规则</strong>：三源无统一编号，必须经独立映射表关联（f30）；每次导入生成快照并记录时间；读取失败保留上一版快照并标记&quot;数据可能过期&quot;（f35），不重试业务动作；</li>
+<li><strong>输出</strong>：统一编号视图 + 映射表 + 快照记录；</li>
+<li><strong>降级路径</strong>：接口未开放时，切换为每周批量 CSV 导入，功能不缺失、只增加人工操作；</li>
+<li><strong>验收</strong>：构造重复编号/空时间/版本断链各 1 例，全部进队并被标记。</li>
+</ul>
+<h3>6.4 FR-03 版本生成与定版</h3>
+<ul>
+<li><strong>规则</strong>：版本号由系统生成，人工不可编辑；定版需同时满足&quot;三要素齐备&quot;与&quot;无未闭环异常&quot;两个条件（f24）；</li>
+<li><strong>留痕</strong>：定版人、定版时间、定版前版本号、变更摘要；</li>
+<li><strong>输出</strong>：唯一有效版本；界面任何位置显示&quot;当前有效版本：vN（定版人/时间）&quot;；</li>
+<li><strong>验收</strong>：任一交接记录可回溯到当时有效版本与其变更链。</li>
+</ul>
+<h3>6.5 FR-04 交接三要素卡口</h3>
+<ul>
+<li><strong>三要素</strong>：交接内容清单、接收责任人、时间窗（开始/结束）；</li>
+<li><strong>规则</strong>：服务端强制校验，缺一不放行（不依赖前端提示，行业结论&quot;提醒会被忽略，拦截不会&quot;）；放行后生成一次性交接凭证，绑定需求项、接收人、截止时间（票据机制），五步验票后生效；</li>
+<li><strong>责任转移</strong>：按 REQ-1 确认的口径执行；口径未定时，字段保留双选项并以&quot;待确认&quot;状态存疑，不得默认按&quot;发出即转移&quot;处理；</li>
+<li><strong>输出</strong>：交接记录 + 责任清单（含转移时点）；</li>
+<li><strong>验收</strong>：3 个样本按两种口径各出一版责任清单，差异可逐项指出。</li>
+</ul>
+<h3>6.6 FR-05 异常人工队列</h3>
+<ul>
+<li><strong>入队条件</strong>：缺项、版本冲突、跨工具数据不一致、脏数据、责任人空缺；</li>
+<li><strong>规则</strong>：队列项必须有人认领与结论，<strong>不得默认通过</strong>（f44）；复核卡记录留痕四项（谁查过/哪个版本/什么建议/谁确认）；超时未处理升级至质量负责人，达到暂停条件即暂停整个批次；</li>
+<li><strong>输出</strong>：异常台账 + 闭环记录 + 超时升级记录；</li>
+<li><strong>验收</strong>：模拟双语主持异常走完整队列，发现→复核→闭环步骤与耗时完整可查，全程无一例默认通过。</li>
+</ul>
+<h3>6.7 FR-06 统计看板与指标导出</h3>
+<ul>
+<li><strong>自动采集</strong>：M6 确认完整率、M7 变更可追溯率、M8 埋点（查询与使用行为）；</li>
+<li><strong>采样登记</strong>：M1 处理时长、M5 复核成本，提供录入入口，不做自动推算；</li>
+<li><strong>输出</strong>：批次看板（按类别/状态/责任人三维下钻）、导出 CSV；</li>
+<li><strong>验收</strong>：看板数字与明细逐条可对账，无&quot;汇总对不上明细&quot;。</li>
+</ul>
+<h3>6.8 FR-07 登录鉴权与五角色权限</h3>
+<table><thead><tr><th>能力</th><th>一线</th><th>协调</th><th>业务负责人</th><th>质量</th><th>管理员</th></tr></thead><tbody>
+<tr><td>登记/补录</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>✅（导入）</td></tr>
+<tr><td>定版、发起交接</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+<tr><td>确认签字</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr>
+<tr><td>质量签字/闭环判定/暂停</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td></tr>
+<tr><td>字段配置/映射/脱敏</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+<tr><td>查看留痕</td><td>仅本人</td><td>交接相关</td><td>全部</td><td>全部</td><td>全部</td></tr>
+</tbody></table>
+<ul>
+<li><strong>规则</strong>：接口级校验（不仅是页面隐藏）；越权返回 403 并记审计；会话使用 HttpOnly Cookie，不落 localStorage；</li>
+<li><strong>验收</strong>：用低权限账号直接调用高权限接口，全部被拒并留痕。</li>
+</ul>
+<h3>6.9 FR-08 审计留痕与变更追溯</h3>
+<ul>
+<li><strong>留痕四项</strong>：谁查过、哪个版本、什么建议、谁确认（f44/f45）；</li>
+<li><strong>规则</strong>：审计表独立，只追加不修改；变更记录含字段级 before/after；</li>
+<li><strong>验收</strong>：任取一项需求，可完整还原其生命周期（含被驳回的确认请求）。</li>
+</ul>
+<h3>6.10 FR-09 跨团队口径对照视图</h3>
+<ul>
+<li><strong>规则</strong>：同一批次的需求项，按&quot;主办方口径&quot;与&quot;执行团队口径&quot;两列并排显示数量与状态；差异项标黄并生成对照清单；</li>
+<li><strong>边界</strong>：只读对照，不修改任一方数据；</li>
+<li><strong>验收</strong>：双方各出 1 名代表用同一批虚构需求核对，差异项清单一致。</li>
+</ul>
+<hr>
+<h2>7. 非功能需求</h2>
+<table><thead><tr><th>类别</th><th>要求</th><th>验证方法</th><th>责任角色</th></tr></thead><tbody>
+<tr><td>规模与性能</td><td>单批次 50 项、并发 ≤10 人；列表首屏 P95 &lt; 1s；问答首字 &lt; 1.5s</td><td>压测脚本 + 真实批次演练</td><td>秦芮</td></tr>
+<tr><td>数据一致性</td><td>双时间戳强制、五态分列、变更留痕不可改</td><td>抽 10 项逐字段核对</td><td>傅景</td></tr>
+<tr><td>安全</td><td>JWT HttpOnly + 服务端密钥（禁止默认值）、登录失败锁定、接口级鉴权、上传类型与大小限制</td><td>越权与暴力破解用例</td><td>秦芮</td></tr>
+<tr><td>合规</td><td>嘉宾敏感需求脱敏入库，原始单据留本地；留存期限与删除规则书面化</td><td>脱敏样本抽检</td><td>傅景 + 秦芮</td></tr>
+<tr><td>可用性</td><td>单机可跑，无外部依赖；接口断则降级 CSV；故障时只读快照可用</td><td>断网/断接口演练</td><td>秦芮</td></tr>
+<tr><td>可维护</td><td>类别同义词、卡口规则、脱敏规则配置化，改配置即时生效</td><td>改配置后不重启验证</td><td>秦芮</td></tr>
+<tr><td>可观测</td><td>每轮操作留日志（时间/人/动作/对象/结果）；错误码与中文提示统一</td><td>日志抽样回溯</td><td>秦芮</td></tr>
+<tr><td>备份与回滚</td><td>每日自动备份 + 上线前一键快照 + 回滚步骤书面化</td><td>演练一次恢复</td><td>秦芮</td></tr>
+</tbody></table>
+<blockquote>对应上线检查清单中的 8 项 P0：默认 JWT 密钥、Cookie 缺 Secure、无备份、问答未限流、登录无失败锁定、提示词无注入防护、无版本快照、无回滚预案。前六项可直接在代码层修复，后两项需运维配合。</blockquote>
+<hr>
+<h2>8. 范围边界</h2>
+<h3>8.1 不做清单（N1–N7，一期及之后均不做，除非重新立项）</h3>
+<table><thead><tr><th>编号</th><th>不做的事</th><th>原因</th></tr></thead><tbody>
+<tr><td>N1</td><td>自动识别/生成需求内容</td><td>客户明确先观察交接点，不增加自动化（f01）</td></tr>
+<tr><td>N2</td><td>自动审批、放行、定责</td><td>模型无审批权（f22）</td></tr>
+<tr><td>N3</td><td>自动确认敏感个人需求</td><td>风险外溢不可控（f52）</td></tr>
+<tr><td>N4</td><td>代业务对客户做承诺</td><td>责任边界</td></tr>
+<tr><td>N5</td><td>写回任何系统、开放外部接口</td><td>只读红线（f32）</td></tr>
+<tr><td>N6</td><td>清洗脏数据</td><td>清洗即失真，须保留原行（f33）</td></tr>
+<tr><td>N7</td><td>承诺收益或 ROI</td><td>无基线，不得编造</td></tr>
+</tbody></table>
+<h3>8.2 永久红线</h3>
+<ul>
+<li>任何写操作在&quot;决定执行&quot;与&quot;执行&quot;之间强制人工确认，确认前零落库；</li>
+<li>交接、定版、确认三类动作不得由系统或模型代办；</li>
+<li>异常不得默认通过，宁可暂停；</li>
+<li>只读集成，读取失败只降级不重试业务动作。</li>
+</ul>
+<h3>8.3 二期（需单独立项与预算）</h3>
+<p>LLM 需求抽取向导、制度问答、附件挂单、跨批次统计。二期<strong>不改变</strong>一期验收口径，只降低录入与查询成本。</p>
+<hr>
+<h2>9. 验收标准与指标</h2>
+<h3>9.1 指标定义</h3>
+<table><thead><tr><th>指标</th><th>定义（分子/分母）</th><th>时间窗</th><th>取数</th><th>基线</th><th>目标</th></tr></thead><tbody>
+<tr><td>M6 确认完整率（主验收）</td><td>具备责任人+确认状态+变更可追溯的项数 / 50</td><td>批次结束</td><td>系统自动</td><td>待测</td><td><strong>100%</strong></td></tr>
+<tr><td>M1 单场处理时长</td><td>交接确认时间 − 需求提出时间（扣待时）</td><td>单场</td><td>线下采样</td><td>待采集</td><td>试点首周定</td></tr>
+<tr><td>M2 返工次数</td><td>版本不一致/字段缺失导致的重核+重做次数</td><td>单场</td><td>现场加列登记</td><td>待采集</td><td>试点首周定</td></tr>
+<tr><td>M3 版本正确率</td><td>交接时点版本=最新版本的项数占比</td><td>单场</td><td>系统自动</td><td>待采集</td><td>试点首周定</td></tr>
+<tr><td>M4 采用率</td><td>用新清单提交变更的场次/人数</td><td>四周</td><td>系统自动</td><td>待采集</td><td>试点首周定</td></tr>
+<tr><td>M5 复核成本</td><td>复核工时 / 项</td><td>单场</td><td>线下采样</td><td>待采集</td><td>试点首周定</td></tr>
+<tr><td>M7 变更可追溯率</td><td>有完整变更链的项数 / 发生变更的项数</td><td>批次</td><td>系统自动</td><td>待测</td><td>100%</td></tr>
+<tr><td>M8 埋点完整率</td><td>成功上报的埋点事件数 / 应上报事件数</td><td>批次</td><td>系统自动</td><td>待测</td><td>≥98%</td></tr>
+</tbody></table>
+<blockquote>除 M6/M7 外，其余指标在试点首周实测前<strong>不设目标值</strong>。填目标值等于编造基线。</blockquote>
+<h3>9.2 验收四条件（缺一不通过）</h3>
+<ol>
+<li>50 项全部具备责任人、确认状态、来源位置；</li>
+<li>任一项可回溯完整变更链（含驳回记录）；</li>
+<li>三个拦截点各有一次真实拦截证据（交接缺要素、异常入队、版本校验失败）；</li>
+<li>越权与写操作全部留痕，抽查 10 条无缺失。</li>
+</ol>
+<h3>9.3 停止判据（S1–S5）</h3>
+<table><thead><tr><th>编号</th><th>触发条件</th><th>动作</th></tr></thead><tbody>
+<tr><td>S1</td><td>无法确认有效版本或关键字段</td><td>该项入人工队列，批次可暂停</td></tr>
+<tr><td>S2</td><td>只读数据源连续两次读取失败且快照过期</td><td>停止使用该源，转 CSV，标注数据可能过期</td></tr>
+<tr><td>S3</td><td>异常队列积压超过约定阈值（待傅景定）</td><td>暂停新增交接，先清队列</td></tr>
+<tr><td>S4</td><td>工时超出 32 人时预算 20%</td><td>暂停开发，重评范围</td></tr>
+<tr><td>S5</td><td>任一&quot;永久红线&quot;被触碰（写回、模型审批、默认通过）</td><td>立即停止试点，书面复盘</td></tr>
+</tbody></table>
+<p><strong>恢复条件</strong>：触发项闭环 + 质量负责人书面确认 + 业务负责人同意恢复；三者缺一不得恢复。</p>
+<hr>
+<h2>10. 风险、假设与开放问题</h2>
+<h3>10.1 风险清单</h3>
+<table><thead><tr><th>编号</th><th>风险</th><th>影响</th><th>缓解</th><th>责任</th></tr></thead><tbody>
+<tr><td>R1</td><td>交接责任转移时点两口径未定</td><td>卡口字段无法定稿，验收不成立</td><td>桌面推演两版责任清单，顾明岚、林亦舟各判一次</td><td>顾明岚</td></tr>
+<tr><td>R2</td><td>版本规则维护人与复核周期未定</td><td>定版功能无法上线</td><td>傅景出规则建议，顾明岚确认</td><td>傅景</td></tr>
+<tr><td>R3</td><td>异常队列值守人与响应时限未定</td><td>队列形同虚设</td><td>傅景提时限、顾明岚批</td><td>傅景</td></tr>
+<tr><td>R4</td><td>三套工具只读接口能否开放未知</td><td>数据入口需降级</td><td>三路留口子，CSV 兜底</td><td>秦芮</td></tr>
+<tr><td>R5</td><td>50 项全量/分批、单区/跨区未定</td><td>M6 分母与映射范围不定</td><td>先按单批次 50 项跑，口径确认后调整</td><td>顾明岚</td></tr>
+<tr><td>R6</td><td>敏感字段脱敏粒度与留存期限未定</td><td>合规风险</td><td>一期先脱敏入库，规则配置化</td><td>秦芮 + 傅景</td></tr>
+<tr><td>R7</td><td>M1/M5 基线全缺</td><td>无法证明改善</td><td>试点首周实测，不预填</td><td>秦芮</td></tr>
+</tbody></table>
+<h3>10.2 待核实口径（附录 A，10 项）</h3>
+<ol>
+<li>客户简报原文与版本（书面 Brief 缺失）；</li>
+<li>行业可比实践（Industry 来源缺失，企业介绍不能证明技术可行）；</li>
+<li>单场需求项真实数量与分布；</li>
+<li>处理时长、返工次数、复核成本的真实基线；</li>
+<li>&quot;确认&quot;的签字形式（邮件/系统/口头）；</li>
+<li>交接责任转移的正式口径；</li>
+<li>版本规则的维护人与复核周期；</li>
+<li>异常队列值守人、响应时限、恢复条件；</li>
+<li>三套工具接口开放性与字段口径；</li>
+<li>敏感字段范围、脱敏粒度与留存期限。</li>
+</ol>
+<h3>10.3 假设（若假设不成立，需重评）</h3>
+<table><thead><tr><th>#</th><th>假设</th><th>不成立时的影响</th></tr></thead><tbody>
+<tr><td>A1</td><td>单批次 50 项、并发 ≤10 人</td><td>架构需重新评估（可能需水平扩展）</td></tr>
+<tr><td>A2</td><td>试点四周、2 人、每周 ≤4 小时</td><td>范围必须削减，否则超预算触发 S4</td></tr>
+<tr><td>A3</td><td>三套工具至少能导出 CSV</td><td>数据入口不存在，一期退化为纯手工登记</td></tr>
+<tr><td>A4</td><td>客户接受&quot;确认&quot;必须落到系统内签字</td><td>验收口径 M6 无法计算</td></tr>
+</tbody></table>
+<hr>
+<h2>11. 实施与试点计划</h2>
+<h3>11.1 四阶段与交付物</h3>
+<table><thead><tr><th>阶段</th><th>周期</th><th>主要交付</th><th>验收出口</th><th>付款比例</th></tr></thead><tbody>
+<tr><td>阶段 1：骨架与导入</td><td>第 1 周</td><td>登录鉴权、五角色、需求项导入（含映射表）、双时间戳 schema、导入报告</td><td>50 项可导入并逐条对账</td><td>30%</td></tr>
+<tr><td>阶段 2：定版与卡口</td><td>第 2 周</td><td>版本生成/定版、交接三要素卡口、票据校验、责任清单</td><td>三要素缺一不放行，责任可回溯</td><td>40%</td></tr>
+<tr><td>阶段 3：异常与看板</td><td>第 3 周</td><td>异常队列、复核卡、M6/M7/M8 看板、导出</td><td>全程无一例默认通过，看板与明细对账</td><td>30%</td></tr>
+<tr><td>阶段 4：试点与交接</td><td>第 4 周</td><td>试点运行、指标实测、培训、上线检查清单、回滚预案</td><td>验收四条件全部满足</td><td>—（含在阶段 3）</td></tr>
+</tbody></table>
+<blockquote>报价口径 <strong>¥65,000</strong>（不含二期）。付款与阶段出口绑定，未过出口不进入下一阶段。</blockquote>
+<h3>11.2 第一周骨架（D1–D5）</h3>
+<table><thead><tr><th>日</th><th>目标</th><th>完成标志</th></tr></thead><tbody>
+<tr><td>D1</td><td>库表与状态机落地</td><td>9 张表建好，五态迁移有测试</td></tr>
+<tr><td>D2</td><td>导入与映射</td><td>md/CSV 导入逐行报错，映射表可维护</td></tr>
+<tr><td>D3</td><td>登录与权限</td><td>五角色接口级校验通过，越权 403 留痕</td></tr>
+<tr><td>D4</td><td>列表与详情</td><td>双时间戳、缺失/未确认分列显示正确</td></tr>
+<tr><td>D5</td><td>冒烟与对账</td><td>冒烟全绿，50 项导入对账无差异</td></tr>
+</tbody></table>
+<h3>11.3 试点运行方式</h3>
+<ul>
+<li>单批次试点，不并行多场；</li>
+<li>首周只观察不干预：记录真实耗时、返工、复核成本，形成基线；</li>
+<li>每周一次 30 分钟复盘：顾明岚主持，唐映秋出记录，傅景判闭环；</li>
+<li>任何异常&quot;宁可停，不默认过&quot;。</li>
+</ul>
+<hr>
+<h2>12. 结论与建议</h2>
+<ol>
+<li><strong>一期按&quot;关卡与留痕系统&quot;立项</strong>，不按&quot;AI 项目&quot;立项；否则验收口径会被自动化的想象带偏（f01）。</li>
+<li><strong>优先做两个切入点</strong>：版本交接与责任清单、异常人工复核卡点。二者不依赖写回与外部接口，失败可在损害发生前拦截。</li>
+<li><strong>六项开放口径必须在开发前拍板</strong>，其中交接责任转移时点与版本规则维护人是硬阻塞，未定则阶段 2 无法开始。</li>
+<li><strong>指标先测后定</strong>：只有 M6 可以预写 100%，其余指标一律试点首周实测，避免用虚构样本当承诺。</li>
+<li><strong>数据入口按最坏情况设计</strong>：假设接口开不了，一期也能靠 CSV 跑通；这样接口开放时只是锦上添花，不是生死线。</li>
+</ol>
+<hr>
+<h2>附录 A　编号索引</h2>
+<table><thead><tr><th>前缀</th><th>含义</th><th>示例</th></tr></thead><tbody>
+<tr><td>REQ-n</td><td>业务需求</td><td>REQ-1 交接责任转移口径</td></tr>
+<tr><td>FR-nn</td><td>功能需求</td><td>FR-04 交接三要素卡口</td></tr>
+<tr><td>M-n</td><td>指标</td><td>M6 确认完整率</td></tr>
+<tr><td>f-nn</td><td>证据编号（访谈/资料）</td><td>f20 交接三要素、f44 不得默认通过</td></tr>
+<tr><td>N-n</td><td>不做清单</td><td>N5 不写回、不开放外部接口</td></tr>
+<tr><td>S-n</td><td>停止判据</td><td>S4 超预算 20%</td></tr>
+<tr><td>R-n</td><td>风险项</td><td>R1 责任转移时点未定</td></tr>
+</tbody></table>
+<h2>附录 B　资料索取清单（按角色）</h2>
+<table><thead><tr><th>角色</th><th>需提供</th><th>需补记的元信息</th></tr></thead><tbody>
+<tr><td>顾明岚</td><td>业务目标与试点决策记录</td><td>名称/来源人/版本/样本时间窗/权限/已取得或待补/与角色陈述的差异</td></tr>
+<tr><td>林亦舟</td><td>现场操作与异常处理记录</td><td>同上</td></tr>
+<tr><td>唐映秋</td><td>流程交接与资料责任记录</td><td>同上</td></tr>
+<tr><td>秦芮</td><td>系统数据与集成条件记录</td><td>同上</td></tr>
+<tr><td>傅景</td><td>风险控制与审核边界记录</td><td>同上</td></tr>
+<tr><td>叶书</td><td>客户体验与协作反馈记录</td><td>同上</td></tr>
+</tbody></table>
+<h2>附录 C　术语表</h2>
+<table><thead><tr><th>术语</th><th>定义</th></tr></thead><tbody>
+<tr><td>三要素</td><td>交接内容清单、接收责任人、时间窗</td></tr>
+<tr><td>双时间戳</td><td>业务发生时间（人类填写）与系统接收时间（服务端生成）分列</td></tr>
+<tr><td>五态</td><td>缺失 / 未确认 / 已确认 / 已定版 / 已交接</td></tr>
+<tr><td>留痕四项</td><td>谁查过、哪个版本、什么建议、谁确认</td></tr>
+<tr><td>卡口</td><td>服务端强制校验，缺条件不放行，不依赖前端提示</td></tr>
+<tr><td>票据</td><td>交接放行后签发的一次性凭证，绑定项/接收人/截止时间</td></tr>
+<tr><td>快照</td><td>只读数据源某次读取的完整副本，带时间标记，用于降级与追溯</td></tr>
+</tbody></table>
+<h2>附录 D　引用与出处</h2>
+<ul>
+<li>四份可核对资料：dlg-travel-conference-01 客户简报、-02 现状信息请求表、-03 业务发现访谈问题库、-04 利益相关者资料与分工（合成训练资料）；</li>
+<li>业务挖掘成果 v3：REQ-1~6、M1–M8、N1–N7、S1–S5、附录 A 十项未核实口径；</li>
+<li>需求分析与技术选型 v1.0（10 问架构分叉、推荐基线、ADR-1~8、三案对比）；</li>
+<li>技术架构选型 v1.0（四层架构、9 张表、第一周 D1–D5）；</li>
+<li>原型与实现：阶段 1 最小原型（解析 + 混合检索）、员工端（SSE 问答 + 缺项清单）、管理后台（导入/规则/审计）、Agent 工具层（10 工具 + 一次性票据）、编排循环（≤5 轮 + 写前强制中断）；</li>
+<li>上线检查清单（5 维度 × 5 项，含 8 项 P0）。</li>
+</ul>
+<blockquote>本报告为合成演练资料，不代表真实授权、业务执行或客户验收。所有结论以客户书面确认为准。</blockquote></div>
+</div></body></html>

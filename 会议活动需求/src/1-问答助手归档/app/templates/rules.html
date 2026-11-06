@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}规则配置{% endblock %}
+{% block body %}
+<header class="page-head">
+  <div>
+    <h1>规则配置</h1>
+    <p>全部存数据库，保存即生效——不重启、不改代码</p>
+  </div>
+</header>
+
+<div id="msg" class="flash" hidden></div>
+
+<!-- ① 同义词 -->
+<section class="panel">
+  <div class="panel-head">
+    <h2>① 同义词表</h2>
+    <span class="hint">一线口语 ↔ 清单用语；加了新词，员工端下一次查询就命中</span>
+  </div>
+  <form class="filters" id="synForm">
+    <input id="s_word" placeholder="词条，如：话筒">
+    <input id="s_syns" placeholder="同义词，逗号分隔，如：麦克风,mic" style="min-width:260px">
+    <button class="btn" type="submit">新增 / 追加</button>
+  </form>
+  <table class="tbl">
+    <thead><tr><th style="width:180px">词条</th><th>同义词</th><th style="width:90px">操作</th></tr></thead>
+    <tbody>
+      {% for w, syns in rules.synonyms.items() %}
+      <tr>
+        <td class="mono">{{ w }}</td>
+        <td class="sub">{{ syns|join('、') if syns else '—' }}</td>
+        <td><button class="btn sm danger" onclick="delSyn('{{ w }}')">删除</button></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="3" class="empty">还没有同义词</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<!-- ② 类别 -->
+<section class="panel">
+  <div class="panel-head">
+    <h2>② 类别字典</h2>
+    <span class="hint">导入预检与录入下拉都用这份字典</span>
+  </div>
+  <div class="chips">
+    {% for c in rules.categories %}<span class="chip">{{ c }}</span>{% endfor %}
+  </div>
+  <p class="sub" style="margin-top:8px">改类别会影响历史数据口径，本期只读；新增类别走版本变更（待确认）。</p>
+</section>
+
+<!-- ③ 卡口开关 -->
+<section class="panel">
+  <div class="panel-head">
+    <h2>③ 卡口开关</h2>
+    <span class="hint">关掉任何一个，下面的校验立刻按关闭后的规则执行</span>
+  </div>
+  <div class="gates">
+    <label class="gate">
+      <input type="checkbox" id="g1" {{ 'checked' if rules.gates.handover_3elements }}>
+      交接三要素强制（接收人 / 未确认项 / 截止时间，f20）
+    </label>
+    <label class="gate">
+      <input type="checkbox" id="g2" {{ 'checked' if rules.gates.version_double_condition }}>
+      未定版不得交接（有效期 + 确认状态双条件，f24）
+    </label>
+    <label class="gate">
+      <input type="checkbox" id="g3" {{ 'checked' if rules.gates.no_auto_pass }}>
+      异常与无责任人不得默认通过（f44）
+    </label>
+  </div>
+  <button class="btn primary" onclick="saveGates()">保存开关</button>
+
+  <div class="try">
+    <div class="sub" style="margin-bottom:8px">现场验证（真的走服务端校验，不是演示文案）</div>
+    <div class="filters">
+      <input id="h_no" placeholder="编号，如 LS-02" value="LS-02">
+      <input id="h_recv" placeholder="接收人（留空=缺要素）">
+      <input id="h_dl" placeholder="截止日期 YYYY-MM-DD">
+      <button class="btn" onclick="tryHandover()">试一次交接</button>
+    </div>
+    <div id="h_out" class="report"></div>
+  </div>
+</section>
+
+<!-- ④ LLM 提示词（二期） -->
+<section class="panel">
+  <div class="panel-head">
+    <h2>④ LLM 提示词模板</h2>
+    <span class="hint">一期无 LLM，模板只存不生效</span>
+  </div>
+  <textarea class="prompt" id="p_text" disabled>{{ rules.llm_prompt.text }}</textarea>
+  <p class="sub" style="margin-top:8px">
+    状态：<span class="tag wait">未启用</span>
+    　二期接 LLM 后，此处的编辑才真正影响答案生成（当前问答由规则汇总，零幻觉）。
+  </p>
+</section>
+
+<script>
+const msg = (t, err) => {
+  const el = document.getElementById("msg");
+  el.textContent = t; el.className = "flash " + (err ? "err" : "ok"); el.hidden = false;
+  if (!err) setTimeout(() => el.hidden = true, 2500);
+};
+
+/* ① 同义词 */
+document.getElementById("synForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const word = document.getElementById("s_word").value.trim();
+  const syns = document.getElementById("s_syns").value.split(/[,，]/).map(x => x.trim()).filter(Boolean);
+  const r = await post("/api/admin/rules/synonyms", {action: "add", word, syns});
+  if (r.ok) { msg("已生效，员工端下一次查询即用新词表"); setTimeout(() => location.reload(), 700); }
+  else msg(`[${r.code}] ${r.message}`, true);
+};
+
+async function delSyn(word) {
+  if (!confirm(`删除词条「${word}」？`)) return;
+  const r = await post("/api/admin/rules/synonyms", {action: "del", word});
+  if (r.ok) location.reload(); else msg(`[${r.code}] ${r.message}`, true);
+}
+
+/* ③ 卡口开关 */
+async function saveGates() {
+  const gates = {
+    handover_3elements: document.getElementById("g1").checked,
+    version_double_condition: document.getElementById("g2").checked,
+    no_auto_pass: document.getElementById("g3").checked,
+  };
+  const r = await put("/api/admin/rules", {gates});
+  msg(r.ok ? "开关已保存，立即生效" : `[${r.code}] ${r.message}`, !r.ok);
+}
+
+async function tryHandover() {
+  const body = {
+    item_no: document.getElementById("h_no").value.trim(),
+    receiver: document.getElementById("h_recv").value.trim(),
+    deadline: document.getElementById("h_dl").value.trim(),
+  };
+  const r = await post("/api/handover/check", body);
+  const out = document.getElementById("h_out");
+  if (!r.ok) { out.innerHTML = `<div class="flash err">[${r.code}] ${r.message}</div>`; return; }
+  out.innerHTML = r.pass
+    ? `<div class="flash ok">✅ 放行　${r.item_no}（${r.status}）</div>`
+    : `<div class="flash err">⛔ 拦截　${r.item_no}（${r.status}）：${r.reason}</div>`;
+}
+
+async function post(url, body) {
+  const res = await fetch(url, {method: "POST", headers: {"Content-Type": "application/json"},
+                               body: JSON.stringify(body)});
+  const d = await res.json().catch(() => ({}));
+  return res.ok ? d : {ok: false, code: d.code || res.status, message: d.message || "请求失败"};
+}
+async function put(url, body) {
+  const res = await fetch(url, {method: "PUT", headers: {"Content-Type": "application/json"},
+                               body: JSON.stringify(body)});
+  const d = await res.json().catch(() => ({}));
+  return res.ok ? d : {ok: false, code: d.code || res.status, message: d.message || "请求失败"};
+}
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 · 会议活动需求管理后台</title>
+<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="login-body">
+<div class="login-card">
+  <div class="login-logo">会议活动需求<span>管理后台</span></div>
+  <form method="post" action="/login">
+    <input type="hidden" name="next" value="{{ next }}">
+    <label>用户名</label>
+    <input name="username" value="qinrui" autocomplete="username" required>
+    <label>密码</label>
+    <input name="password" type="password" value="admin123" autocomplete="current-password" required>
+    {% if error %}<div class="login-err">{{ error }}</div>{% endif %}
+    <button class="btn primary block" type="submit">登录</button>
+  </form>
+  <div class="login-hint">
+    演示账号：qinrui / admin123（管理员）<br>
+    yixian / 123456（一线专员，登录后进员工端）
+  </div>
+</div>
+</body>
+</html>

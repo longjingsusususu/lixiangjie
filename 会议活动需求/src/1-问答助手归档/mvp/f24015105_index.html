@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<!-- f24015105_index.html —— 员工问答 MVP 前端（单页，原生 JS，无框架）
+     要点：fetch + ReadableStream 手动切 SSE 帧（不用 EventSource，避免 POST 限制）、
+           打字机效果、「正在检索需求项…」状态条、底部引用来源、统一错误条 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>会议需求问答 · MVP (f24015105)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: "Microsoft YaHei", sans-serif; background: #f4f6f9; height: 100vh;
+         display: flex; flex-direction: column; }
+  header { background: #1f3a5f; color: #fff; padding: 12px 20px; font-size: 16px; }
+  header small { opacity: .7; margin-left: 8px; }
+  #chat { flex: 1; overflow-y: auto; padding: 20px; max-width: 860px; margin: 0 auto; width: 100%; }
+  .bubble { margin: 10px 0; padding: 10px 14px; border-radius: 10px; max-width: 78%;
+            line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  .user { background: #1f6feb; color: #fff; margin-left: auto; }
+  .bot { background: #fff; border: 1px solid #e3e8ef; }
+  .status { color: #8a94a6; font-size: 13px; padding: 4px 2px; }
+  .status::after { content: "…"; animation: dots 1s steps(3) infinite; }
+  @keyframes dots { 0%{content:""} 33%{content:"."} 66%{content:".."} 100%{content:"..."} }
+  .items { margin: 8px 0; }
+  .item { background: #f8fafc; border-left: 3px solid #1f3a5f; padding: 6px 10px;
+          margin: 4px 0; font-size: 13px; border-radius: 4px; }
+  .item b { color: #1f3a5f; }
+  .tag { display: inline-block; padding: 0 6px; border-radius: 8px; font-size: 12px; margin-left: 6px; }
+  .tag.缺失 { background: #fde8e8; color: #c0392b; }
+  .tag.未确认 { background: #fdf3e0; color: #b7791f; }
+  .tag.已确认, .tag.已定版, .tag.已交接 { background: #e6f4ea; color: #2f7d4f; }
+  .cite { border-top: 1px dashed #d5dbe3; margin-top: 8px; padding-top: 6px;
+          font-size: 12px; color: #6b7686; }
+  .cite li { margin: 2px 0 2px 16px; }
+  .error { background: #fde8e8; color: #c0392b; border-radius: 8px; padding: 8px 12px;
+           font-size: 13px; margin: 6px 0; }
+  footer { display: flex; gap: 10px; padding: 12px 20px; background: #fff;
+           border-top: 1px solid #e3e8ef; }
+  #q { flex: 1; padding: 10px 12px; border: 1px solid #cfd6e0; border-radius: 8px;
+       font-size: 14px; outline: none; }
+  #q:focus { border-color: #1f6feb; }
+  #send { padding: 10px 22px; border: 0; border-radius: 8px; background: #1f6feb;
+          color: #fff; font-size: 14px; cursor: pointer; }
+  #send:disabled { background: #9db8e8; cursor: not-allowed; }
+</style>
+</head>
+<body>
+<header>会议需求问答 <small>MVP · f24015105 · 一期零 LLM</small></header>
+<div id="chat"></div>
+<footer>
+  <input id="q" placeholder="例如：餐饮有什么没定的？/ 双语主持定了没" maxlength="200"
+         autocomplete="off">
+  <button id="send">发送</button>
+</footer>
+
+<script>
+const $chat = document.getElementById('chat');
+const $q = document.getElementById('q');
+const $send = document.getElementById('send');
+let sessionId = null;   // 会话 id：首次问答由后端返回，之后复用
+let busy = false;       // 防同会话并发：请求中禁用发送
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+const scroll = () => $chat.scrollTop = $chat.scrollHeight;
+
+// 打字机：把完整文本按 18ms/字 追加到目标元素
+function typewriter(node, full, done) {
+  let i = 0;
+  (function tick() {
+    node.textContent = full.slice(0, ++i);
+    scroll();
+    i < full.length ? setTimeout(tick, 18) : done && done();
+  })();
+}
+
+async function ask() {
+  const question = $q.value.trim();
+  if (!question || busy) return;
+  busy = true; $send.disabled = true;
+
+  // 用户气泡 + 状态条（检索中）
+  $chat.appendChild(el('div', 'bubble user', question));
+  const status = el('div', 'status', '正在检索需求项');
+  $chat.appendChild(status); scroll();
+
+  const body = { session_id: sessionId, question };
+  try {
+    const resp = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    // 契约：所有校验错误在建流前以普通 JSON 返回
+    if (!resp.ok || !(resp.headers.get('content-type') || '').includes('event-stream')) {
+      const err = await resp.json().catch(() => ({ code: 50001, message: '网络异常' }));
+      $chat.appendChild(el('div', 'error', `错误 ${err.code}：${err.message}`));
+      scroll(); return;
+    }
+
+    // 手动切 SSE 帧：event: xxx\ndata: {...}\n\n
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '', bot = null, itemsBox = null, finalText = '', citations = [];
+
+    const handle = (ev, data) => {
+      if (ev === 'status') { status.textContent = data.message; return; }
+      if (ev === 'item') {                       // 命中的需求项卡片，先于文字回答出现
+        if (!itemsBox) { itemsBox = el('div', 'items'); $chat.appendChild(itemsBox); }
+        const card = el('div', 'item');
+        const b = el('b', null, data.item_no);
+        const tag = el('span', 'tag ' + data.status, data.status);
+        card.appendChild(b); card.appendChild(tag);
+        card.appendChild(document.createTextNode('　' + data.content));
+        const src = el('div', null, `来源：${data.source_tool}｜${data.source_ref || '—'}　责任人：${data.owner}`);
+        src.style.color = '#8a94a6';
+        card.appendChild(src);
+        itemsBox.appendChild(card);
+        status.remove();                         // 首条到达即收起状态条
+        scroll(); return;
+      }
+      if (ev === 'chunk') { finalText += data.text; return; }
+      if (ev === 'done') {
+        sessionId = data.session_id;
+        citations = data.citations || [];
+        return;
+      }
+      if (ev === 'error') {
+        $chat.appendChild(el('div', 'error', `错误 ${data.code}：${data.message}`));
+        scroll();
+      }
+    };
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let idx;
+      while ((idx = buf.indexOf('\n\n')) >= 0) {   // 一帧 = 两个换行
+        const frame = buf.slice(0, idx); buf = buf.slice(idx + 2);
+        let ev = 'message', data = '';
+        for (const line of frame.split('\n')) {
+          if (line.startsWith('event: ')) ev = line.slice(7);
+          if (line.startsWith('data: ')) data = line.slice(6);
+        }
+        if (data) handle(ev, JSON.parse(data));
+      }
+    }
+    // 流结束：打字机上屏汇总文案 + 引用来源
+    if (finalText) {
+      bot = el('div', 'bubble bot');
+      const txt = el('span'); bot.appendChild(txt);
+      const cite = el('div', 'cite');
+      if (citations.length) {
+        cite.textContent = '引用来源：';
+        const ul = el('ul');
+        citations.forEach((c, i) => {
+          const li = el('li', null, `[${i + 1}] ${c.item_no}（${c.source_tool}｜${c.source_ref || '—'}）：${c.snippet}…`);
+          ul.appendChild(li);
+        });
+        cite.appendChild(ul);
+        bot.appendChild(cite);
+      }
+      $chat.appendChild(bot);
+      typewriter(txt, finalText);
+    }
+  } catch (e) {
+    $chat.appendChild(el('div', 'error', `错误 50001：网络异常（${e.message}）`));
+  } finally {
+    status.remove();
+    busy = false; $send.disabled = false; $q.value = ''; $q.focus();
+  }
+}
+
+$send.onclick = ask;
+$q.addEventListener('keydown', e => { if (e.key === 'Enter') ask(); });
+</script>
+</body>
+</html>
