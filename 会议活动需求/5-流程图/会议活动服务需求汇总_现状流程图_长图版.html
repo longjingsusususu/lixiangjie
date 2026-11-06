@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>会议活动服务需求汇总 · 现状流程图</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#F4F2EA;padding:36px 20px 60px;
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+    color:#1F2A24;-webkit-font-smoothing:antialiased;line-height:1.6;
+  }
+  .page{max-width:1120px;margin:0 auto;background:#FBF9F3;border:1px solid #E4E0D2;border-radius:14px;padding:40px 40px 34px}
+  .doc-title{text-align:center;font-size:26px;font-weight:600;letter-spacing:3px}
+  .doc-sub{text-align:center;font-size:12px;color:#6B7670;margin-top:8px;letter-spacing:.5px;line-height:1.9}
+  .chain{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:18px}
+  .chain i{font-style:normal;font-size:11px;padding:3px 9px;border-radius:4px;background:#E7EDE6;color:#2F4A3D;border:1px solid #D3DDD2}
+  .chain i.a{background:#FBF0D8;color:#7A5312;border-color:#EDDDB8}
+  .chain i.b{background:#EDF2F8;color:#2E5175;border-color:#D7E2ED}
+  .chain i.c{background:#FBECEC;color:#8E2F27;border-color:#EBD3D1}
+  .chain em{font-style:normal;font-size:11px;color:#A9B2A9;align-self:center}
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:20px 0 4px}
+  .kpi{background:#fff;border:1px solid #E4E0D2;border-radius:7px;padding:8px 10px}
+  .kpi b{display:block;font-size:15px;font-weight:600}
+  .kpi span{display:block;font-size:10.5px;color:#7A857C;margin-top:1px}
+  .kpi.r b{color:#A8352C}
+  .flow{margin-top:22px}
+  .row{display:grid;grid-template-columns:240px 520px 240px;gap:20px;align-items:center}
+  .stage{grid-column:2;background:#2C4F45;color:#fff;border-radius:6px;padding:7px 14px;display:flex;align-items:center;gap:10px;margin:16px 0 12px}
+  .stage .no{font-size:10px;letter-spacing:1px;opacity:.72}
+  .stage .t{font-size:13px;font-weight:600;letter-spacing:1px}
+  .stage .w{margin-left:auto;font-size:10.5px;opacity:.72}
+  .node{grid-column:2;background:#fff;border:1px solid #E1DED2;border-radius:9px;padding:12px 15px;border-left-width:4px;border-left-style:solid;border-left-color:#C2C8BD}
+  .node .h{display:flex;align-items:baseline;gap:8px;margin-bottom:5px}
+  .node .h .t{font-size:14px;font-weight:600;letter-spacing:.5px}
+  .node .h .w{margin-left:auto;font-size:10.5px;color:#8A948B}
+  .node .b{font-size:12px;color:#4A574E;line-height:1.8}
+  .node .b b{font-weight:600;color:#1F2A24;background:linear-gradient(transparent 62%,#F3E7C8 62%)}
+  .node .b .r{font-weight:600;color:#A8352C;background:linear-gradient(transparent 62%,#F8DFDC 62%)}
+  .node .f{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+  .chip{font-size:10px;padding:1px 7px;border-radius:4px;background:#F2F3EE;color:#6B7670;border:1px solid #E4E4DC;letter-spacing:.3px}
+  .chip.fail{background:#FBECEC;color:#8E2F27;border-color:#EBD3D1}
+  .chip.hand{background:#FDF3DF;color:#85500B;border-color:#EDDCBB}
+  .chip.ok{background:#FBF3D8;color:#7A5A12;border-color:#EADFB8}
+  .node.fail{border-left-color:#C0463D;background:#FDFBF9}
+  .node.hand{border-left-color:#C98A28}
+  .node.data{border-left-color:#4A7BA7}
+  .node.check{border-left-color:#6E9E78}
+  .note{border-radius:8px;padding:11px 13px;font-size:11px;line-height:1.75}
+  .note .t{font-size:11.5px;font-weight:600;margin-bottom:4px}
+  .note .ev{font-size:10px;color:#8A948B;margin-top:6px;letter-spacing:.3px}
+  .note.red{background:#FBECEC;border:1px solid #EBD3D1;border-left:3px solid #C0463D}
+  .note.red .t{color:#8E2F27}
+  .note.blue{background:#EAF1F8;border:1px solid #D7E2ED;border-left:3px solid #4A7BA7}
+  .note.blue .t{color:#2E5175}
+  .note.gray{background:#F1F2EC;border:1px solid #E2E3D9;border-left:3px solid #9AA69C}
+  .note.gray .t{color:#4A574E}
+  .note.left{grid-column:1;text-align:left}
+  .note.right{grid-column:3}
+  .arrow{grid-column:2;height:20px;display:flex;justify-content:center}
+  .arrow span{width:1.5px;background:#BFC7BB;position:relative}
+  .arrow span::after{content:"";position:absolute;left:-3.5px;bottom:-1px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid #BFC7BB}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:11px;color:#5C6A60;margin-top:26px;padding-top:14px;border-top:1px solid #E4E0D2}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid}
+  .foot{margin-top:14px;font-size:10.5px;color:#8A948B;line-height:1.9}
+  @media print{body{background:#fff;padding:0}.page{border:none;max-width:none}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-title">会议活动服务需求汇总</div>
+  <div class="doc-sub">
+    现状流程图（As-Is）｜6 名角色 · 36 条访谈事实 · 3 处断点 · 1 个无主区<br>
+    流程内没有拦截点，问题通常到执行现场或事后回查才被发现
+  </div>
+
+  <div class="chain">
+    <i>议程确认</i><em>›</em><i>需求登记</i><em>›</em><i>汇总 50 项</i><em>›</em><i class="a">定版本</i><em>›</em>
+    <i class="a">供应商交接</i><em>›</em><i>执行与承诺</i><em>›</em><i class="b">跨工具核对</i><em>›</em>
+    <i class="c">异常回查</i><em>›</em><i>50 项验收</i><em>›</em><i>客诉复盘</i>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi r"><b>3 处</b><span>断点（流程内无拦截）</span></div>
+    <div class="kpi"><b>2 套</b><span>并行记录（群消息/系统）</span></div>
+    <div class="kpi"><b>3 套</b><span>工具，无统一关联编号</span></div>
+    <div class="kpi"><b>7 个</b><span>角色参与交接</span></div>
+    <div class="kpi"><b>50 项</b><span>验收分母</span></div>
+    <div class="kpi"><b>32 人时</b><span>试点预算上限</span></div>
+  </div>
+
+  <div class="flow">
+
+    <div class="row"><div class="stage"><span class="no">阶段 01</span><span class="t">登记与发生</span><span class="w">主办方 → 一线</span></div></div>
+
+    <div class="row">
+      <div class="note gray">
+        <div class="t">起点为什么在这里</div>
+        需求不是"没登记"，而是<b>同一件事情被记在两个地方</b>。登记那一刻没人错，错在两条记录从此各自演化。
+        <div class="ev">f01、f10</div>
+      </div>
+      <div class="node">
+        <div class="h"><span class="t">议程确认</span><span class="w">主办方 · 顾明岚</span></div>
+        <div class="b">确认议程与特殊要求（双语、设备、场地）。<b>临时变更多发生在这一步之后</b>，但变更只通知到人，没有回写到清单。</div>
+        <div class="f"><span class="chip">f01</span><span class="chip">f11</span></div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="arrow"><span></span></div>
+
+    <div class="row">
+      <div class="note red">
+        <div class="t">断点 1 · 同一嘉宾被两个人分别记录</div>
+        设备需求与语言服务需求由不同人员分别记录，<b>发生节点与受影响对象当时都没记</b>。事后对不上时，无法在原记录里判断是谁漏了什么。
+        <div class="ev">f10</div>
+      </div>
+      <div class="node fail">
+        <div class="h"><span class="t">嘉宾需求登记</span><span class="w">一线 · 林亦舟</span></div>
+        <div class="b">设备、语言、餐饮分别走各自的表。<b>设备与语言由两个人记</b>，两边不知道对方改过；一位嘉宾对应两条互不相认的记录。</div>
+        <div class="f"><span class="chip fail">断点 1</span><span class="chip">f10</span><span class="chip">f31</span></div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="arrow"><span></span></div>
+
+    <div class="row">
+      <div></div>
+      <div class="node">
+        <div class="h"><span class="t">群消息 / 纸面兜底</span><span class="w">一线 · 现场</span></div>
+        <div class="b">现场来不及就先用群消息或纸面兜住，<b>事后回系统补录</b>。于是"回填时间"取代了"业务发生时间"，任何按时间排序的分析都会失真。</div>
+        <div class="f"><span class="chip">f13</span><span class="chip">f34</span></div>
+      </div>
+      <div class="note blue">
+        <div class="t">时间失真</div>
+        回填时间 ≠ 发生时间。按时间先后判断"谁先改的"，会把<b>晚录</b>误判成<b>晚发生</b>，责任判断随之反转。
+        <div class="ev">f13、f34</div>
+      </div>
+    </div>
+
+    <div class="row"><div class="stage"><span class="no">阶段 02</span><span class="t">汇总与定版</span><span class="w">流程协调员 · 唐映秋</span></div></div>
+
+    <div class="row">
+      <div class="note gray">
+        <div class="t">人工拼接</div>
+        50 项来自不同人的表，格式各行其是。缺项靠口头补，补完没有回写来源位置，下一场又要重新问一遍。
+        <div class="ev">f15、f20</div>
+      </div>
+      <div class="node">
+        <div class="h"><span class="t">汇总成 50 项清单</span><span class="w">协调 · 唐映秋</span></div>
+        <div class="b">按现有交接记录的格式人工拼成一张表，<b>50 项来自多张不同来源的表</b>。缺项靠口头补齐，补齐后不标注来源位置。</div>
+        <div class="f"><span class="chip">f02</span><span class="chip">f20</span><span class="chip">f21</span></div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="arrow"><span></span></div>
+
+    <div class="row">
+      <div></div>
+      <div class="node fail">
+        <div class="h"><span class="t">定版本</span><span class="w">协调 · 唐映秋</span></div>
+        <div class="b">"有效期 + 确认状态"双条件口径已经存在，但<b>谁改规则、多久复核一次，没有人定</b>。实际执行时，判断哪份是最新版靠文件名。</div>
+        <div class="f"><span class="chip fail">断点 2</span><span class="chip">f24</span><span class="chip">f34</span></div>
+      </div>
+      <div class="note red">
+        <div class="t">断点 2 · 规则一变，清单即失效</div>
+        有效版本靠双条件判，但维护人与复核周期空缺。<b>规则一变，责任清单随之失效，且不留失效痕迹</b>——旧版仍会被当成有效版传下去。
+        <div class="ev">f24、f34</div>
+      </div>
+    </div>
+
+    <div class="row"><div class="stage"><span class="no">阶段 03</span><span class="t">交接</span><span class="w">协调 → 供应商 / 执行团队</span></div></div>
+
+    <div class="row">
+      <div class="note red">
+        <div class="t">断点 3 · 三项要素缺失</div>
+        要求列明<b>最新版本、未确认事项、截止时间</b>，实际常只发一条"已处理"。三要素一缺，责任就在这句话里断开了。
+        <div class="ev">f23、f25</div>
+      </div>
+      <div class="node hand">
+        <div class="h"><span class="t">供应商交接</span><span class="w">协调 → 接收方</span></div>
+        <div class="b">交接记录要求写明接收人、版本、未结项，但<b>实际常只发一条"已处理"</b>。接收方按自己理解执行，无从核对。</div>
+        <div class="f"><span class="chip hand">交接点</span><span class="chip fail">断点 3</span><span class="chip">f23</span></div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="arrow"><span></span></div>
+
+    <div class="row">
+      <div></div>
+      <div class="node">
+        <div class="h"><span class="t">未确认项归属</span><span class="w">协调 / 接收方</span></div>
+        <div class="b">规则是"<b>未确认项不能归到对方名下</b>"。于是它既不算我方、也不算对方，成为谁都不认领的无主区，随清单一起流到执行。</div>
+        <div class="f"><span class="chip">f25</span><span class="chip">f31</span></div>
+      </div>
+      <div class="note blue">
+        <div class="t">无主区不等于推诿</div>
+        这不是态度问题，是<b>规则本身没有给这类项指定归属人</b>。只要"确认"这个动作没有指定人，"无主"就是必然而非偶然。
+        <div class="ev">f25</div>
+      </div>
+    </div>
+
+    <div class="row"><div class="stage"><span class="no">阶段 04</span><span class="t">执行与对外承诺</span><span class="w">供应商 · 业务人员</span></div></div>
+
+    <div class="row">
+      <div class="note gray">
+        <div class="t">错版直达客户</div>
+        执行发生在对外承诺之后。<b>一旦版本错、漏项多，纠错成本已经不可撤销</b>——这是全流程唯一"事后无法补救"的环节。
+        <div class="ev">f42、f52</div>
+      </div>
+      <div class="node">
+        <div class="h"><span class="t">按原方案执行</span><span class="w">供应商 / 执行团队</span></div>
+        <div class="b">按定稿版本交付。翻译、设备清单沿用原方案，<b>现场临时改双语时不会自动回传</b>，清单与实际开始分叉。</div>
+        <div class="f"><span class="chip">f10</span><span class="chip">f11</span></div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="arrow"><span></span></div>
+
+    <div class="row">
+      <div></div>
+      <div class="node">
+        <div class="h"><span class="t">对外承诺</span><span class="w">业务人员 · 人工确认</span></div>
+        <div class="b">承诺由业务人员确认，<b>模型与工具没有审批权</b>。但"未确认"项若没被标出来，会被默认当成"已确认"一起发出去。</div>
+        <div class="f"><span class="chip ok">人工确认</span><span class="chip">f22</span><span class="chip">f52</span></div>
+      </div>
+      <div class="note red">
+        <div class="t">不可撤销的一步</div>
+        客诉、赔偿、信誉损失都发生在这一步之后。<b>能拦的地方在交接（阶段 03），不在承诺（阶段 04）</b>——这也是为什么切入点选 REQ-1 + REQ-3。
+        <div class="ev">f42、f44、f52</div>
+      </div>
+    </div>
+
+    <div class="row"><div class="stage"><span class="no">阶段 05</span><span class="t">核对与回查</span><span class="w">数字化工程师 · 秦芮</span></div></div>
+
+    <div class="row">
+      <div class="note blue">
+        <div class="t">无统一关联编号</div>
+        服务台、台账、文件库各存一份，<b>跨工具只能靠字段匹配</b>。字段一改，历史记录就对不上，这是数据侧最担心的一点。
+        <div class="ev">f30</div>
+      </div>
+      <div class="node data">
+        <div class="h"><span class="t">跨三套工具核对</span><span class="w">数字化 · 秦芮</span></div>
+        <div class="b">内部服务台、业务台账、文件库三处各存一份记录。<b>没有统一关联编号</b>，只能靠嘉宾名、日期、场次做字段匹配。</div>
+        <div class="f"><span class="chip">f30</span><span class="chip">f31</span><span class="chip">f32</span></div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="arrow"><span></span></div>
+
+    <div class="row">
+      <div></div>
+      <div class="node data">
+        <div class="h"><span class="t">异常回查原始版本</span><span class="w">协调 / 数字化</span></div>
+        <div class="b">出问题后翻原始版本，<b>判断哪一环没有同步</b>。演练样本约 4 小时/场（虚构样本，不作基线），且没有登记入口，查完即散。</div>
+        <div class="f"><span class="chip">f11</span><span class="chip">f12 虚构</span></div>
+      </div>
+      <div class="note red">
+        <div class="t">现状没有"异常入口"</div>
+        没有登记处、没有值守人、没有响应时限，也没有"不得默认通过"这条硬规则。异常只能由现场人员自行发现——<b>这正是 REQ-3 要补的卡口</b>。
+        <div class="ev">f44</div>
+      </div>
+    </div>
+
+    <div class="row"><div class="stage"><span class="no">阶段 06</span><span class="t">验收与复盘</span><span class="w">审核质量 · 傅景 / 客户协同 · 叶书</span></div></div>
+
+    <div class="row">
+      <div class="note gray">
+        <div class="t">唯一的硬验收</div>
+        不看"效率提升了多少"，只看<b>50 项是否每一行都有责任人和确认状态</b>。这条口径是全流程唯一可判定的验收标准。
+        <div class="ev">f02、f42</div>
+      </div>
+      <div class="node check">
+        <div class="h"><span class="t">50 项质量验收</span><span class="w">质量 · 傅景</span></div>
+        <div class="b">50 项服务项<b>全部具备责任人与确认状态</b>，变更影响可追溯，每条结果能追到来源与人工复核记录；达不到不签字。</div>
+        <div class="f"><span class="chip ok">人工确认</span><span class="chip">f02</span><span class="chip">f42</span></div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="arrow"><span></span></div>
+
+    <div class="row">
+      <div></div>
+      <div class="node check">
+        <div class="h"><span class="t">客诉登记与每周复盘</span><span class="w">客户协同 · 叶书</span></div>
+        <div class="b">客诉先登记原始问题与版本，<b>不推测客户意图</b>；每周收集误报、漏报、未确认项，双方对齐口径后再谈工具。</div>
+        <div class="f"><span class="chip">f54</span><span class="chip">f55</span><span class="chip">f50</span></div>
+      </div>
+      <div class="note blue">
+        <div class="t">复盘能发现问题，但改不了流程</div>
+        每周复盘是现状里<b>唯一稳定的反馈回路</b>，但它只记录问题、不指定责任人，也不触发流程变更——所以同样的问题会重复出现。
+        <div class="ev">f55</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="legend">
+    <span><i style="background:#fff;border-color:#C2C8BD"></i>执行步骤</span>
+    <span><i style="background:#FDF3DF;border-color:#C98A28"></i>交接点</span>
+    <span><i style="background:#FBECEC;border-color:#C0463D"></i>断点 / 失败位置</span>
+    <span><i style="background:#EAF1F8;border-color:#4A7BA7"></i>数据与系统</span>
+    <span><i style="background:#FBF3D8;border-color:#EADFB8"></i>人工确认</span>
+    <span><i style="background:#FBECEC;border-color:#C0463D"></i>左侧旁注 = 断点成因</span>
+    <span><i style="background:#EAF1F8;border-color:#4A7BA7"></i>右侧旁注 = 结构性特征</span>
+  </div>
+
+  <div class="foot">
+    流程骨架取自访谈原话：业务负责人"议程确认 → 嘉宾需求 → 供应商交接 → 执行 → 反馈"（f01），流程协调员的责任跟踪范围（f20）。<br>
+    合成业务场景；仅使用本项目资料，除标注"虚构"的样本外不含量化损失，真实接口、客户签核与业务收益需另行核实。
+  </div>
+
+</div>
+</body>
+</html>
