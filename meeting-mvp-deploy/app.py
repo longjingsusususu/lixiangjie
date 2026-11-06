@@ -676,6 +676,28 @@ async def users(request: Request):
     return {"users": [dict(r) for r in rows]}
 
 
+# ---------------------------------------------------------------- Agent 问答（零 LLM 规则 Harness）
+@app.get("/api/ask")
+async def api_ask(request: Request):
+    """Agent 问答入口：Harness 编排（decide→invoke→observe），知识库检索+看板统计。
+
+    红线落地：本接口只读——只做检索与统计，不产生任何确认/定版/交接动作（f22 模型无审批权）；
+    知识库未覆盖自动转人工（人工审核点④的问答侧兜底）。调用留痕进审计表。
+    """
+    user, e = need(request)
+    if e:
+        return e
+    q = request.query_params.get("q", "")
+    try:
+        from f24015105_agent_harness import ask as harness_ask
+        result = harness_ask(q, role=user["role"], db=db())
+    except ImportError:
+        return JSONResponse({"code": "E_AGENT_OFF", "message": "Agent 模块未部署（一期可独立运行）"}, status_code=501)
+    audit(user["id"], "suggest", "ask", suggestion=f"问答：{q[:60]}")
+    db().commit()
+    return {"question": q, "role": user["role"], **result}
+
+
 # ---------------------------------------------------------------- 页面
 PAGE = """<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
 <title>会议活动服务需求汇总系统 MVP</title><meta name="viewport" content="width=device-width,initial-scale=1">
