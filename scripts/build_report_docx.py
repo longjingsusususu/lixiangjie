@@ -9,6 +9,7 @@ build_report_docx.py —— 把需求报告 Markdown 渲染成排版好的 .docx
 
 import re
 import sys
+from pathlib import Path
 
 from docx import Document
 from docx.enum.section import WD_SECTION
@@ -178,6 +179,9 @@ def parse_md(md):
         elif line.startswith("#"):
             level = len(line) - len(line.lstrip("#"))
             blocks.append((f"h{level}", line[level:].strip()))
+        elif re.match(r"^!\[[^\]]*\]\(.+\)\s*$", line.strip()):
+            m = re.match(r"^!\[([^\]]*)\]\((.+)\)\s*$", line.strip())
+            blocks.append(("image", (m.group(2).strip(), m.group(1))))
         elif line.startswith(">"):
             blocks.append(("quote", line.lstrip("> ").strip()))
         elif re.match(r"^[-*]\s+", line):
@@ -392,6 +396,23 @@ def build(md_path, out_path, doc_kind="", subtitle=""):
                     p.add_run().add_break()
                 r = p.add_run(ln if ln else " ")
                 set_font(r, 9, False, RGBColor(0x1F, 0x29, 0x37), east="Consolas")
+        elif kind == "image":
+            img_path, alt = payload
+            base = Path(md_path).resolve().parent
+            cand = [Path(img_path), base / img_path, base.parent / img_path]
+            found = next((c for c in cand if c.exists()), None)
+            if found is None:
+                p = doc.add_paragraph()
+                add_rich(p, f"[缺图：{img_path}]", size=9, gray=True)
+            else:
+                p = doc.add_paragraph()
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = p.add_run()
+                run.add_picture(str(found), width=Cm(15.5))
+                if alt:
+                    cap = doc.add_paragraph()
+                    cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    add_rich(cap, alt, size=9, gray=True)
         elif kind == "quote":
             p = doc.add_paragraph()
             p.paragraph_format.left_indent = Cm(0.6)
