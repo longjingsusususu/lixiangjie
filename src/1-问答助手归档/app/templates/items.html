@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}需求项库{% endblock %}
+{% block body %}
+<header class="page-head">
+  <div>
+    <h1>需求项库</h1>
+    <p>共 {{ total }} 项　·　缺失 {{ counts.get('缺失', 0) }}　未确认 {{ counts.get('未确认', 0) }}　
+       已确认 {{ counts.get('已确认', 0) }}　已定版 {{ counts.get('已定版', 0) }}</p>
+  </div>
+  <button class="btn primary" onclick="openEdit()">＋ 新增需求项</button>
+</header>
+
+<div id="msg" class="flash" hidden></div>
+
+<section class="panel">
+  <form class="filters" method="get" action="/admin/items">
+    <input name="q" value="{{ q }}" placeholder="编号 / 内容 / 责任人">
+    <select name="category">
+      <option value="">全部类别</option>
+      {% for c in categories %}<option value="{{ c }}" {{ 'selected' if category==c }}>{{ c }}</option>{% endfor %}
+    </select>
+    <select name="status">
+      <option value="">全部状态</option>
+      {% for s in statuses %}<option value="{{ s }}" {{ 'selected' if status==s }}>{{ s }}</option>{% endfor %}
+    </select>
+    <button class="btn" type="submit">筛选</button>
+    <a class="btn" href="/admin/items">重置</a>
+    <span class="grow"></span>
+    <a class="btn" href="/admin/import">批量导入 →</a>
+  </form>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>编号</th><th>类别</th><th>内容</th><th>状态</th><th>责任人</th>
+          <th>来源位置</th><th>发生时间</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+      {% for it in items %}
+      <tr>
+        <td class="mono">{{ it.item_no }}</td>
+        <td><span class="tag">{{ it.category }}</span></td>
+        <td class="clip" title="{{ it.content }}">{{ it.content }}</td>
+        <td><span class="tag {{ 'off' if it.status=='缺失' else ('wait' if it.status=='未确认' else 'ok') }}">{{ it.status }}</span></td>
+        <td>{{ it.owner or '—' }}</td>
+        <td class="sub">{{ it.source_tool or '来源缺失' }} {{ it.source_ref }}</td>
+        <td class="sub">{{ it.biz_occurred_at or '—' }}</td>
+        <td class="ops">
+          <button class="btn sm" onclick='openEdit({{ it|tojson }})'>编辑</button>
+          <button class="btn sm danger" onclick="delItem('{{ it.item_no }}')">删除</button>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="empty">没有匹配的需求项</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if pages > 1 %}
+  <div class="pager">
+    {% for p in range(1, pages + 1) %}
+      <a class="{{ 'on' if p == page }}"
+         href="?q={{ q }}&status={{ status }}&category={{ category }}&page={{ p }}">{{ p }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+<!-- 新增/编辑弹窗（原生 dialog，无依赖） -->
+<dialog id="dlg" class="dlg">
+  <form method="dialog" id="f">
+    <h3 id="dlgTitle">新增需求项</h3>
+    <div class="grid2">
+      <label>编号<input name="item_no" placeholder="EQ-07" required></label>
+      <label>类别
+        <select name="category">{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select>
+      </label>
+      <label>状态
+        <select name="status">{% for s in statuses %}<option>{{ s }}</option>{% endfor %}</select>
+      </label>
+      <label>责任人<input name="owner" placeholder="林亦舟"></label>
+      <label>来源工具<input name="source_tool" placeholder="服务台 / 台账 / 文件库 / 手工补录"></label>
+      <label>来源位置<input name="source_ref" placeholder="SD-2026-0130｜第5行"></label>
+      <label>业务发生时间<input name="biz_occurred_at" placeholder="2026-10-28 09:00"></label>
+      <label>系统接收时间<input name="received_at" placeholder="留空=当前时间"></label>
+    </div>
+    <label class="full">内容<textarea name="content" rows="2"></textarea></label>
+    <div class="dlg-foot">
+      <span class="sub">编辑会写入变更留痕（谁改的、改前改后）</span>
+      <span class="grow"></span>
+      <button class="btn" value="cancel" type="submit">取消</button>
+      <button class="btn primary" type="button" onclick="save()">保存</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+let editing = null;
+
+function openEdit(it) {
+  editing = it || null;
+  const f = document.getElementById("f");
+  f.reset();
+  document.getElementById("dlgTitle").textContent = it ? `编辑 ${it.item_no}` : "新增需求项";
+  if (it) {
+    for (const k of ["item_no", "category", "content", "status", "owner",
+                     "source_tool", "source_ref", "biz_occurred_at", "received_at"]) {
+      if (f[k]) f[k].value = it[k] || "";
+    }
+    f.item_no.disabled = true;           // 编号是主键，不允许改
+  } else {
+    f.item_no.disabled = false;
+  }
+  document.getElementById("dlg").showModal();
+}
+
+async function save() {
+  const f = document.getElementById("f");
+  const body = {};
+  for (const k of ["item_no","category","content","status","owner","source_tool",
+                   "source_ref","biz_occurred_at","received_at"]) body[k] = f[k].value.trim();
+  const url = editing ? `/api/admin/items/${editing.item_no}` : "/api/admin/items";
+  const res = await fetch(url, {
+    method: editing ? "PATCH" : "POST",
+    headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)
+  });
+  const d = await res.json().catch(() => ({}));
+  if (res.ok) { location.reload(); }
+  else { alert(`[${d.code || res.status}] ${d.message || "保存失败"}`); }
+}
+
+async function delItem(no) {
+  if (!confirm(`删除 ${no}？\n（软删：数据保留可审计，检索立刻剔除）`)) return;
+  const res = await fetch(`/api/admin/items/${no}`, {method: "DELETE"});
+  const d = await res.json().catch(() => ({}));
+  if (res.ok) location.reload();
+  else alert(`[${d.code || res.status}] ${d.message || "删除失败"}`);
+}
+</script>
+{% endblock %}
